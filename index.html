@@ -1257,50 +1257,49 @@
                                                               ------------------------------------------------------------- */
                                                               // Login
                                                               const login = () => {
-                                                                  const user = $("#authUser").value.trim();
-                                                                  const pass = $("#authPass").value.trim();
+  const email = document.getElementById("authUser").value.trim();
+  const password = document.getElementById("authPass").value.trim();
 
-                                                                  if (!user || !pass) {
-                                                                      $("#authMsg").textContent = "Preencha todos os campos!";
-                                                                      return;
-                                                                  }
+  if (!email || !password) {
+    document.getElementById("authMsg").textContent = "Preencha todos os campos!";
+    return;
+  }
 
-                                                                  // Verificar credenciais admin
-                                                                  if (user === ADMIN.user && pass === ADMIN.pass) {
-                                                                      setStorageData(STORAGE_KEYS.currentUser, { user, isAdmin: true });
-                                                                      checkAuth();
-                                                                      toast("Login admin realizado!", "success");
-                                                                      loadFilms();
-                                                                      return;
-                                                                  }
-
-                                                                  // Verificar outros usuários (simulação)
-                                                                  setStorageData(STORAGE_KEYS.currentUser, { user, isAdmin: false });
-                                                                  checkAuth();
-                                                                  toast(`Bem-vindo, ${user}!`, "success");
-                                                                  loadFilms();
-                                                              };
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      setStorageData(STORAGE_KEYS.currentUser, { user: user.email, uid: user.uid });
+      checkAuth();
+      toast(`Bem-vindo, ${user.email}!`, "success");
+    })
+    .catch((error) => {
+      document.getElementById("authMsg").textContent = "Usuário ou senha inválidos.";
+      console.error(error);
+    });
+};
 
                                                               // Registrar
                                                               const register = () => {
-                                                                  const user = $("#authUser").value.trim();
-                                                                  const pass = $("#authPass").value.trim();
+  const email = document.getElementById("regUser").value.trim();
+  const password = document.getElementById("regPass").value.trim();
 
-                                                                  if (!user || !pass) {
-                                                                      $("#authMsg").textContent = "Preencha todos os campos!";
-                                                                      return;
-                                                                  }
+  if (!email || !password) {
+    document.getElementById("regMsg").textContent = "Preencha todos os campos!";
+    return;
+  }
 
-                                                                  if (user === ADMIN.user) {
-                                                                      $("#authMsg").textContent = "Nome de usuário reservado!";
-                                                                      return;
-                                                                  }
-
-                                                                  setStorageData(STORAGE_KEYS.currentUser, { user, isAdmin: false });
-                                                                  checkAuth();
-                                                                  toast(`Conta criada com sucesso, ${user}!`, "success");
-                                                                  loadFilms();
-                                                              };
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      setStorageData(STORAGE_KEYS.currentUser, { user: user.email, uid: user.uid });
+      checkAuth();
+      toast(`Conta criada com sucesso!`, "success");
+    })
+    .catch((error) => {
+      document.getElementById("regMsg").textContent = "Erro ao registrar: " + error.message;
+      console.error(error);
+    });
+};
 
                                                               // Logout
                                                               const logout = () => {
