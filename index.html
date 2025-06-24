@@ -2118,29 +2118,23 @@ function adicionarFilmesManuais() {
             url: "https://www.youtube.com/watch?v=ODcko7WzHA8",
             thumb: "https://i.ytimg.com/vi/ODcko7WzHA8/hq720.jpg",
             synopsis: "Hayley é uma adolescente inteligente e charmosa. Jeff é um fotógrafo de moda bonito e elegante. Um bate-papo online, um encontro em uma cafeteria, um ensaio fotográfico improvisado na casa de Jeff. Jeff acha que é sua noite de sorte. Ele terá uma surpresa."
+        },
+        {
+            title: "Cidade de Deus",
+            category: "Ação",
+            url: "https://drive.google.com/file/d/11lsnJWADHLBYfhUXKy4d_rfJ2XvnADkA/view",
+            thumb: "https://i.ytimg.com/vi/vxYSM_sNm4A/maxresdefault.jpg",
+            synopsis: "Buscapé é um jovem pobre, negro e sensível, que cresce em um universo de muita violência. Ele vive na Cidade de Deus, favela carioca conhecida por ser um dos locais mais violentos do Rio. Amedrontado com a possibilidade de se tornar um bandido, é salvo de seu destino por causa de seu talento como fotógrafo, que permite que siga carreira na profissão. É por meio de seu olhar atrás da câmera que ele analisa o dia a dia da favela em que vive, onde a violência aparenta não ter fim."
+        },
+        {
+            title: "Possession (1981)",
+            category: "Terror",
+            url: "https://drive.google.com/file/d/1XxwgaAedteUktNjVAGPBmR5Uo0V124px/view",
+            thumb: "https://i.ytimg.com/vi/aLXW-oVbTxE/maxresdefault.jpg",
+            synopsis: "Após retornar de uma longa viagem, tudo que Marc quer é encontrar sua esposa Anna e seu filho novamente. No entanto, assim que chega a Berlim, Marc percebe que Anna mudou radicalmente de comportamento e, assim que pode, ela pede o divórcio. O homem inicialmente suspeita que ela foi infiel, contudo os eventos dão uma guinada sinistra e ele percebe que está em uma situação macabra."
         }
     ];
 
-    const armazenados = localStorage.getItem("schaccine_films");
-    const jaTem = armazenados ? JSON.parse(armazenados) : [];
-
-    // Evita duplicar ao recarregar
-    filmesManuais.forEach(f => {
-        const existe = jaTem.some(f2 => f2.title === f.title && f2.url === f.url);
-        if (!existe) {
-            jaTem.unshift({
-                id: Date.now().toString() + Math.random(),
-                title: f.title,
-                category: f.category,
-                url: f.url,
-                thumb: f.thumb,
-                synopsis: f.synopsis,
-                timestamp: Date.now(),
-                rating: 0,
-                ratings: []
-            });
-        }
-    });
 
     localStorage.setItem("schaccine_films", JSON.stringify(jaTem));
 }
