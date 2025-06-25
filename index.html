@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schaccine - Plataforma de Filmes Exclusiva</title>
+    <title>Schaccine - Filmes Góticos Exclusivos</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,6 +80,12 @@
             100% { transform: scale(1); }
         }
 
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         /* ==========================
            HEADER
         ========================== */
@@ -109,11 +115,25 @@
             letter-spacing: 1px;
             transition: var(--transition);
             animation: pulse 3s infinite;
+            position: relative;
         }
 
-        .logo:hover {
-            text-shadow: 0 0 25px var(--primary);
-            transform: scale(1.03);
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+        }
+
+        .logo:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
         }
 
         .tagline {
@@ -121,6 +141,7 @@
             opacity: 0.8;
             margin-top: 4px;
             letter-spacing: 1px;
+            font-style: italic;
         }
 
         .nav-bar {
@@ -241,6 +262,19 @@
             font-family: 'Unbounded', sans-serif;
             text-shadow: 0 0 10px rgba(187, 0, 255, 0.5);
             letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .auth-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
         }
 
         .auth-input-group {
@@ -249,7 +283,7 @@
         }
 
         .auth-input {
-            padding: 16px 20px;
+            padding: 16px 20px 16px 50px;
             margin: 10px 0;
             width: 100%;
             border-radius: 10px;
@@ -271,7 +305,7 @@
 
         .auth-input-icon {
             position: absolute;
-            right: 20px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
             color: rgba(255, 255, 255, 0.5);
@@ -327,14 +361,6 @@
             box-shadow: 0 5px 15px rgba(187, 0, 255, 0.3);
         }
 
-        .auth-message {
-            margin-top: 20px;
-            color: #ff5555;
-            min-height: 24px;
-            font-size: 14px;
-            animation: fadeIn 0.3s ease;
-        }
-
         .auth-footer {
             margin-top: 25px;
             font-size: 14px;
@@ -345,11 +371,22 @@
             color: var(--primary);
             text-decoration: none;
             transition: var(--transition);
+            position: relative;
         }
 
-        .auth-footer a:hover {
-            text-decoration: underline;
-            text-shadow: 0 0 10px rgba(187, 0, 255, 0.5);
+        .auth-footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .auth-footer a:hover::after {
+            width: 100%;
         }
 
         /* ==========================
@@ -399,6 +436,19 @@
             gap: 15px;
             text-shadow: 0 0 10px rgba(187, 0, 255, 0.3);
             animation: fadeIn 0.8s ease-out;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
         }
 
         .section-title i {
@@ -997,6 +1047,26 @@
             margin-bottom: 15px;
             color: var(--primary);
             text-shadow: 0 0 10px rgba(187, 0, 255, 0.3);
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-username::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+        }
+
+        .profile-username:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
         }
 
         .profile-stats {
@@ -1046,6 +1116,19 @@
             color: var(--primary);
             font-family: 'Unbounded', sans-serif;
             text-shadow: 0 0 10px rgba(187, 0, 255, 0.3);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .profile-favorites-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
         }
 
         /* ==========================
@@ -1206,6 +1289,9 @@
                 <button id="toggleThemeBtn" class="nav-btn" onclick="toggleTheme()">
                     <i class="fas fa-moon"></i> Tema
                 </button>
+                <button id="logoutBtn" class="nav-btn hidden" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
                 <img id="userAvatarBtn" class="user-avatar hidden" src="https://placehold.co/150x150?text=Foto" onclick="showProfile()" />
             </div>
         </div>
@@ -1228,8 +1314,8 @@
             </div>
 
             <div class="auth-actions">
-                <button class="auth-btn primary" onclick="login()">Entrar</button>
-                <button class="auth-btn secondary" onclick="register()">Registrar</button>
+                <button class="auth-btn primary" id="loginBtn">Entrar</button>
+                <button class="auth-btn secondary" id="registerBtn">Registrar</button>
             </div>
 
             <div class="auth-message" id="authMsg"></div>
@@ -1242,14 +1328,14 @@
         <!-- ============ LOADING SECTION ============ -->
         <div class="loader hidden" id="loadingSection">
             <div class="loader-spinner"></div>
-            <div class="loader-text">Autenticando...</div>
+            <div class="loader-text" id="loaderText">Autenticando...</div>
         </div>
 
         <!-- ============ UPLOAD SECTION (ADMIN) ============ -->
         <section class="upload-section hidden" id="uploadSection">
             <h2 class="section-title"><i class="fas fa-cloud-upload-alt"></i> Upload de Filme</h2>
 
-            <form class="upload-form" onsubmit="event.preventDefault(); uploadFilm();">
+            <form class="upload-form" id="uploadForm">
                 <div class="upload-form-group">
                     <label class="upload-label" for="filmTitle">Título do Filme</label>
                     <input type="text" id="filmTitle" class="upload-input" required />
@@ -1291,7 +1377,7 @@
         <section class="hidden" id="filmsSection">
             <div class="controls-row">
                 <input type="text" id="searchBar" class="search-input" placeholder="Pesquisar filmes... (Pressione / para focar)" />
-                <select id="sortSelect" class="select-input" onchange="loadFilms()">
+                <select id="sortSelect" class="select-input">
                     <option value="latest">Mais recentes</option>
                     <option value="title">A–Z</option>
                     <option value="rating">Melhor avaliados</option>
@@ -1310,7 +1396,7 @@
                     <button class="profile-avatar-edit" onclick="document.getElementById('profilePicFile').click()">
                         <i class="fas fa-camera"></i>
                     </button>
-                    <input type="file" id="profilePicFile" class="hidden" accept="image/*" onchange="uploadProfilePic(this)" />
+                    <input type="file" id="profilePicFile" class="hidden" accept="image/*" />
                 </div>
 
                 <div class="profile-info">
@@ -1324,6 +1410,10 @@
                         <div class="profile-stat">
                             <div class="profile-stat-value" id="profileCommentsCount">0</div>
                             <div class="profile-stat-label">Comentários</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-value" id="profileRatingsCount">0</div>
+                            <div class="profile-stat-label">Avaliações</div>
                         </div>
                     </div>
 
@@ -1369,7 +1459,7 @@
                     <div class="comments-section">
                         <h3 class="section-title"><i class="fas fa-comments"></i> Comentários</h3>
 
-                        <form class="comment-form" onsubmit="event.preventDefault(); addComment();">
+                        <form class="comment-form" id="commentForm">
                             <textarea id="commentInput" class="comment-input" placeholder="Deixe seu comentário..."></textarea>
                             <button type="submit" class="comment-submit">Enviar</button>
                         </form>
@@ -1398,7 +1488,7 @@
                         </div>
                     </div>
 
-                    <button class="nav-btn" style="margin-top: 20px;" id="favoriteBtn" onclick="toggleFavorite()">
+                    <button class="nav-btn" style="margin-top: 20px;" id="favoriteBtn">
                         <i class="far fa-heart"></i> Adicionar aos Favoritos
                     </button>
                 </div>
@@ -1521,10 +1611,10 @@
         // AUTENTICAÇÃO
         // ==========================
         const login = () => {
-            const email = $("#authUser").value.trim();
+            const username = $("#authUser").value.trim();
             const password = $("#authPass").value.trim();
 
-            if (!email || !password) {
+            if (!username || !password) {
                 $("#authMsg").textContent = "Preencha todos os campos!";
                 return;
             }
@@ -1532,8 +1622,11 @@
             // Mostrar loader
             $("#authSection").classList.add("hidden");
             $("#loadingSection").classList.remove("hidden");
+            $("#loaderText").textContent = "Autenticando...";
 
-            auth.signInWithEmailAndPassword(email + "@schaccine.com", password)
+            const email = `${username}@schaccine.com`;
+
+            auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     // Usuário logado com sucesso
                     currentUser = userCredential.user;
@@ -1543,7 +1636,20 @@
                 .catch((error) => {
                     $("#authSection").classList.remove("hidden");
                     $("#loadingSection").classList.add("hidden");
-                    toast("Erro no login: " + error.message, "error");
+                    
+                    let errorMsg = "Erro no login: ";
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMsg += "Usuário não encontrado";
+                            break;
+                        case 'auth/wrong-password':
+                            errorMsg += "Senha incorreta";
+                            break;
+                        default:
+                            errorMsg += error.message;
+                    }
+                    
+                    toast(errorMsg, "error");
                 });
         };
 
@@ -1556,11 +1662,17 @@
                 return;
             }
 
+            if (password.length < 6) {
+                $("#authMsg").textContent = "A senha deve ter pelo menos 6 caracteres";
+                return;
+            }
+
             // Mostrar loader
             $("#authSection").classList.add("hidden");
             $("#loadingSection").classList.remove("hidden");
+            $("#loaderText").textContent = "Criando sua conta...";
 
-            const email = username + "@schaccine.com";
+            const email = `${username}@schaccine.com`;
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
@@ -1581,7 +1693,20 @@
                 .catch((error) => {
                     $("#authSection").classList.remove("hidden");
                     $("#loadingSection").classList.add("hidden");
-                    toast("Erro no registro: " + error.message, "error");
+                    
+                    let errorMsg = "Erro no registro: ";
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMsg += "Este usuário já existe";
+                            break;
+                        case 'auth/weak-password':
+                            errorMsg += "Senha muito fraca";
+                            break;
+                        default:
+                            errorMsg += error.message;
+                    }
+                    
+                    toast(errorMsg, "error");
                 });
         };
 
@@ -1592,6 +1717,7 @@
                 $("#filmsSection").classList.add("hidden");
                 $("#profileSection").classList.add("hidden");
                 $("#profileBtn").classList.add("hidden");
+                $("#logoutBtn").classList.add("hidden");
                 $("#userAvatarBtn").classList.add("hidden");
                 $("#uploadSection").classList.add("hidden");
 
@@ -1621,6 +1747,8 @@
                         // Verificar se é admin
                         if (user.email === "admin@schaccine.com") {
                             $("#uploadSection").classList.remove("hidden");
+                        } else {
+                            $("#uploadSection").classList.add("hidden");
                         }
                         
                         // Mostrar seções apropriadas
@@ -1628,6 +1756,7 @@
                         $("#loadingSection").classList.add("hidden");
                         $("#filmsSection").classList.remove("hidden");
                         $("#profileBtn").classList.remove("hidden");
+                        $("#logoutBtn").classList.remove("hidden");
                         $("#userAvatarBtn").classList.remove("hidden");
                         
                         // Carregar filmes
@@ -1640,6 +1769,7 @@
                     $("#filmsSection").classList.add("hidden");
                     $("#profileSection").classList.add("hidden");
                     $("#profileBtn").classList.add("hidden");
+                    $("#logoutBtn").classList.add("hidden");
                     $("#userAvatarBtn").classList.add("hidden");
                     $("#uploadSection").classList.add("hidden");
                 }
@@ -1650,6 +1780,8 @@
         // GERENCIAMENTO DE FILMES
         // ==========================
         const loadFilms = () => {
+            $("#filmList").innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;"><div class="loader-spinner"></div></div>';
+            
             filmsRef.once('value').then((snapshot) => {
                 const filmsData = snapshot.val();
                 const films = filmsData ? Object.values(filmsData) : [];
@@ -1677,7 +1809,7 @@
             filmGrid.innerHTML = "";
 
             if (films.length === 0) {
-                filmGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;">Nenhum filme encontrado</p>`;
+                filmGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:40px;">Nenhum filme encontrado</p>`;
                 return;
             }
 
@@ -1693,10 +1825,10 @@
                         <img src="${film.thumb}" class="film-thumb" alt="${film.title}" />
                         <div class="film-overlay">
                             <div class="film-actions">
-                                <button class="action-btn" onclick="event.stopPropagation(); showFilmDetail('${film.id}')">
+                                <button class="action-btn">
                                     <i class="fas fa-play"></i>
                                 </button>
-                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite('${film.id}')">
+                                <button class="action-btn">
                                     <i class="far fa-heart"></i>
                                 </button>
                             </div>
@@ -1710,13 +1842,29 @@
                         </div>
                     </div>
                 `;
-
+                
+                // Adicionar eventos
+                const playBtn = filmCard.querySelector('.film-actions .action-btn:nth-child(1)');
+                const favBtn = filmCard.querySelector('.film-actions .action-btn:nth-child(2)');
+                
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showFilmDetail(film.id);
+                });
+                
+                favBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(film.id);
+                });
+                
                 filmCard.addEventListener("click", () => showFilmDetail(film.id));
                 filmGrid.appendChild(filmCard);
             });
         };
 
-        const uploadFilm = () => {
+        const uploadFilm = (e) => {
+            e.preventDefault();
+            
             const title = $("#filmTitle").value.trim();
             const category = $("#filmCategory").value;
             const url = $("#filmURL").value.trim();
@@ -1728,6 +1876,9 @@
                 return;
             }
 
+            $("#uploadForm button").disabled = true;
+            $("#uploadForm button").textContent = "Enviando...";
+            
             const newFilm = {
                 id: Date.now().toString(),
                 title,
@@ -1749,10 +1900,15 @@
                     $("#filmThumb").value = "";
                     $("#filmSynopsis").value = "";
                     
+                    $("#uploadForm button").disabled = false;
+                    $("#uploadForm button").textContent = "Enviar Filme";
+                    
                     toast("Filme adicionado com sucesso!", "success");
                     loadFilms();
                 })
                 .catch((error) => {
+                    $("#uploadForm button").disabled = false;
+                    $("#uploadForm button").textContent = "Enviar Filme";
                     toast("Erro ao adicionar filme: " + error.message, "error");
                 });
         };
@@ -1763,10 +1919,22 @@
         const showFilmDetail = (filmId) => {
             currentFilmId = filmId;
             
+            $("#filmDetailModal").style.display = "block";
+            document.body.style.overflow = "hidden";
+            $("#filmDetailPlayer").src = "";
+            
+            // Mostrar loader no modal
+            $("#filmDetailTitle").textContent = "Carregando...";
+            $("#filmDetailSynopsis").textContent = "";
+            
             filmsRef.child(filmId).once('value').then((snapshot) => {
                 currentFilm = snapshot.val();
                 
-                if (!currentFilm) return;
+                if (!currentFilm) {
+                    toast("Filme não encontrado", "error");
+                    closeFilmDetail();
+                    return;
+                }
                 
                 // Preencher dados do modal
                 $("#filmDetailTitle").textContent = currentFilm.title;
@@ -1784,10 +1952,6 @@
                 
                 // Carregar comentários
                 loadComments(filmId);
-                
-                // Mostrar modal
-                $("#filmDetailModal").style.display = "block";
-                document.body.style.overflow = "hidden";
             });
         };
 
@@ -1879,14 +2043,14 @@
         // ==========================
         const loadComments = (filmId) => {
             const commentsList = $("#commentsList");
-            commentsList.innerHTML = "";
+            commentsList.innerHTML = '<div style="text-align:center;padding:20px;"><div class="loader-spinner"></div></div>';
 
             commentsRef.child(filmId).on('value', (snapshot) => {
                 const comments = snapshot.val();
                 commentsList.innerHTML = "";
 
                 if (!comments) {
-                    commentsList.innerHTML = `<p style="text-align:center;color:#aaa;">Nenhum comentário ainda</p>`;
+                    commentsList.innerHTML = `<p style="text-align:center;color:#aaa;padding:20px;">Nenhum comentário ainda</p>`;
                     return;
                 }
 
@@ -1906,18 +2070,28 @@
                         <p>${comment.text}</p>
                         ${comment.userId === currentUser.uid ? `
                         <div class="comment-actions">
-                            <button class="comment-action" onclick="deleteComment('${filmId}', '${comment.id}')">
+                            <button class="comment-action">
                                 <i class="fas fa-trash"></i> Excluir
                             </button>
                         </div>
                         ` : ''}
                     `;
+                    
+                    if (comment.userId === currentUser.uid) {
+                        const deleteBtn = commentEl.querySelector('.comment-action');
+                        deleteBtn.addEventListener('click', () => {
+                            deleteComment(filmId, comment.id);
+                        });
+                    }
+                    
                     commentsList.appendChild(commentEl);
                 });
             });
         };
 
-        const addComment = () => {
+        const addComment = (e) => {
+            e.preventDefault();
+            
             if (!currentUser || !currentFilmId) {
                 toast("Faça login para comentar", "error");
                 return;
@@ -1929,6 +2103,9 @@
                 return;
             }
 
+            $("#commentForm button").disabled = true;
+            $("#commentForm button").textContent = "Enviando...";
+            
             const commentRef = commentsRef.child(currentFilmId).push();
             
             commentRef.set({
@@ -1939,9 +2116,13 @@
             })
             .then(() => {
                 $("#commentInput").value = "";
+                $("#commentForm button").disabled = false;
+                $("#commentForm button").textContent = "Enviar";
                 toast("Comentário adicionado!", "success");
             })
             .catch((error) => {
+                $("#commentForm button").disabled = false;
+                $("#commentForm button").textContent = "Enviar";
                 toast("Erro ao adicionar comentário: " + error.message, "error");
             });
         };
@@ -1979,13 +2160,15 @@
                 });
         };
 
-        const toggleFavorite = () => {
-            if (!currentUser || !currentFilmId) {
+        const toggleFavorite = (filmId = null) => {
+            const filmToToggle = filmId || currentFilmId;
+            
+            if (!currentUser || !filmToToggle) {
                 toast("Faça login para usar favoritos", "error");
                 return;
             }
 
-            const favoriteRef = favoritesRef.child(currentUser.uid).child(currentFilmId);
+            const favoriteRef = favoritesRef.child(currentUser.uid).child(filmToToggle);
             
             favoriteRef.once('value').then((snapshot) => {
                 if (snapshot.exists()) {
@@ -1993,7 +2176,18 @@
                     favoriteRef.remove()
                         .then(() => {
                             toast("Removido dos favoritos", "success");
-                            checkFavoriteStatus(currentFilmId);
+                            if (filmId) {
+                                // Atualizar card individual
+                                const filmCard = $(`.film-card[data-id="${filmId}"]`);
+                                if (filmCard) {
+                                    const heartIcon = filmCard.querySelector('.action-btn:nth-child(2) i');
+                                    if (heartIcon) {
+                                        heartIcon.className = "far fa-heart";
+                                    }
+                                }
+                            } else {
+                                checkFavoriteStatus(currentFilmId);
+                            }
                             updateProfileStats();
                         });
                 } else {
@@ -2001,7 +2195,18 @@
                     favoriteRef.set(true)
                         .then(() => {
                             toast("Adicionado aos favoritos", "success");
-                            checkFavoriteStatus(currentFilmId);
+                            if (filmId) {
+                                // Atualizar card individual
+                                const filmCard = $(`.film-card[data-id="${filmId}"]`);
+                                if (filmCard) {
+                                    const heartIcon = filmCard.querySelector('.action-btn:nth-child(2) i');
+                                    if (heartIcon) {
+                                        heartIcon.className = "fas fa-heart";
+                                    }
+                                }
+                            } else {
+                                checkFavoriteStatus(currentFilmId);
+                            }
                             updateProfileStats();
                         });
                 }
@@ -2012,22 +2217,28 @@
             if (!currentUser) return;
 
             const favoriteList = $("#favouriteList");
-            favoriteList.innerHTML = "";
+            favoriteList.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;"><div class="loader-spinner"></div></div>';
 
             favoritesRef.child(currentUser.uid).once('value').then((snapshot) => {
                 const favorites = snapshot.val();
                 
                 if (!favorites) {
-                    favoriteList.innerHTML = `<p style="grid-column:1/-1;text-align:center;">Nenhum filme favorito</p>`;
+                    favoriteList.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:40px;">Nenhum filme favorito</p>`;
                     return;
                 }
                 
                 const filmIds = Object.keys(favorites);
                 
                 // Buscar detalhes dos filmes favoritos
-                filmIds.forEach(filmId => {
-                    filmsRef.child(filmId).once('value').then((filmSnapshot) => {
-                        const film = filmSnapshot.val();
+                Promise.all(filmIds.map(filmId => 
+                    filmsRef.child(filmId).once('value').then(filmSnapshot => ({
+                        id: filmId,
+                        film: filmSnapshot.val()
+                    }))
+                ).then(results => {
+                    favoriteList.innerHTML = "";
+                    
+                    results.forEach(({id, film}) => {
                         if (!film) return;
                         
                         const filmCard = document.createElement("div");
@@ -2041,10 +2252,10 @@
                                 <img src="${film.thumb}" class="film-thumb" alt="${film.title}" />
                                 <div class="film-overlay">
                                     <div class="film-actions">
-                                        <button class="action-btn" onclick="event.stopPropagation(); showFilmDetail('${film.id}')">
+                                        <button class="action-btn">
                                             <i class="fas fa-play"></i>
                                         </button>
-                                        <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite('${film.id}')">
+                                        <button class="action-btn">
                                             <i class="fas fa-heart"></i>
                                         </button>
                                     </div>
@@ -2058,7 +2269,20 @@
                                 </div>
                             </div>
                         `;
-
+                        
+                        const playBtn = filmCard.querySelector('.film-actions .action-btn:nth-child(1)');
+                        const favBtn = filmCard.querySelector('.film-actions .action-btn:nth-child(2)');
+                        
+                        playBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            showFilmDetail(film.id);
+                        });
+                        
+                        favBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            toggleFavorite(film.id);
+                        });
+                        
                         filmCard.addEventListener("click", () => showFilmDetail(film.id));
                         favoriteList.appendChild(filmCard);
                     });
@@ -2091,6 +2315,13 @@
                     const commentsCount = commentsSnapshot.exists() ? Object.keys(commentsSnapshot.val()).length : 0;
                     $("#profileCommentsCount").textContent = commentsCount;
                 });
+                
+            // Contar avaliações
+            ratingsRef.orderByChild('userId').equalTo(currentUser.uid).once('value')
+                .then((ratingsSnapshot) => {
+                    const ratingsCount = ratingsSnapshot.exists() ? Object.keys(ratingsSnapshot.val()).length : 0;
+                    $("#profileRatingsCount").textContent = ratingsCount;
+                });
         };
 
         const backToFilms = () => {
@@ -2107,6 +2338,7 @@
                 
                 // Mostrar loader
                 $("#loadingSection").classList.remove("hidden");
+                $("#loaderText").textContent = "Enviando imagem...";
                 
                 // Fazer upload do arquivo
                 storageRef.put(file)
@@ -2124,12 +2356,12 @@
                         $("#profilePic").src = downloadURL;
                         $("#userAvatarBtn").src = downloadURL;
                         
-                        toast("Foto de perfil atualizada!", "success");
                         $("#loadingSection").classList.add("hidden");
+                        toast("Foto de perfil atualizada!", "success");
                     })
                     .catch((error) => {
-                        toast("Erro ao atualizar foto: " + error.message, "error");
                         $("#loadingSection").classList.add("hidden");
+                        toast("Erro ao atualizar foto: " + error.message, "error");
                     });
             }
         };
@@ -2180,23 +2412,43 @@
             $("#searchBar").addEventListener("input", (e) => {
                 const term = e.target.value.toLowerCase();
                 
+                if (term === "") {
+                    loadFilms();
+                    return;
+                }
+                
+                $("#filmList").innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;"><div class="loader-spinner"></div></div>';
+                
                 filmsRef.once('value').then((snapshot) => {
                     const filmsData = snapshot.val();
                     const films = filmsData ? Object.values(filmsData) : [];
                     
-                    if (term === "") {
-                        loadFilms();
-                        return;
-                    }
-
                     const filtered = films.filter(film => 
                         film.title.toLowerCase().includes(term) || 
                         film.category.toLowerCase().includes(term) ||
-                        film.synopsis.toLowerCase().includes(term)
+                        (film.synopsis && film.synopsis.toLowerCase().includes(term))
                     );
 
                     renderFilms(filtered);
                 });
+            });
+            
+            // Event Listeners
+            $("#loginBtn").addEventListener("click", login);
+            $("#registerBtn").addEventListener("click", register);
+            $("#sortSelect").addEventListener("change", loadFilms);
+            $("#uploadForm").addEventListener("submit", uploadFilm);
+            $("#commentForm").addEventListener("submit", addComment);
+            $("#favoriteBtn").addEventListener("click", toggleFavorite);
+            $("#profilePicFile").addEventListener("change", (e) => uploadProfilePic(e.target));
+            $("#filmDetailClose").addEventListener("click", closeFilmDetail);
+            
+            // Configurar estrelas de avaliação
+            $("#filmRatingStars").addEventListener("click", (e) => {
+                if (e.target.classList.contains("star")) {
+                    const rating = parseInt(e.target.dataset.rating);
+                    rateFilm(rating);
+                }
             });
         });
     </script>
