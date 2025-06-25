@@ -1184,29 +1184,11 @@
         }
     </style>
     
-    <!-- Firebase Integration -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getDatabase, ref, push, set, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCri7p3YoJYAKYKguJgkio3NQawzK_pa4E",
-            authDomain: "schaccine.firebaseapp.com",
-            databaseURL: "https://schaccine-default-rtdb.firebaseio.com",
-            projectId: "schaccine",
-            storageBucket: "schaccine.appspot.com",
-            messagingSenderId: "962117609154",
-            appId: "1:962117609154:web:7a0cfef85d096654f47d5b",
-            measurementId: "G-RR6S5ZS8BJ"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const db = getDatabase(app);
-        const storage = getStorage(app);
-    </script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"></script>
 </head>
 <body>
     <!-- ============ HEADER ============ -->
@@ -1328,7 +1310,7 @@
                     <button class="profile-avatar-edit" onclick="document.getElementById('profilePicFile').click()">
                         <i class="fas fa-camera"></i>
                     </button>
-                    <input type="file" id="profilePicFile" class="hidden" accept="image/*" onchange="previewProfilePic(this)" />
+                    <input type="file" id="profilePicFile" class="hidden" accept="image/*" onchange="uploadProfilePic(this)" />
                 </div>
 
                 <div class="profile-info">
@@ -1424,44 +1406,46 @@
         </div>
     </div>
 
-    <!-- ============ SCRIPT ============ -->
     <script>
-        /* -------------------------------------------------------------
-           CONFIGURAÇÕES GERAIS
-        ------------------------------------------------------------- */
-        const STORAGE_KEYS = {
-            currentUser: "schaccine_user",
-            films: "schaccine_films",
-            ratings: "schaccine_ratings"
+        // ==========================
+        // INICIALIZAÇÃO DO FIREBASE
+        // ==========================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCri7p3YoJYAKYKguJgkio3NQawzK_pa4E",
+            authDomain: "schaccine.firebaseapp.com",
+            databaseURL: "https://schaccine-default-rtdb.firebaseio.com",
+            projectId: "schaccine",
+            storageBucket: "schaccine.appspot.com",
+            messagingSenderId: "962117609154",
+            appId: "1:962117609154:web:7a0cfef85d096654f47d5b",
+            measurementId: "G-RR6S5ZS8BJ"
         };
 
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+        const storage = firebase.storage();
+
+        // Referências do banco de dados
+        const filmsRef = db.ref('films');
+        const usersRef = db.ref('users');
+        const commentsRef = db.ref('comments');
+        const favoritesRef = db.ref('favorites');
+        const ratingsRef = db.ref('ratings');
+
         // Variáveis globais
-        let currentFilmIndex = null;
+        let currentUser = null;
         let currentFilmId = null;
+        let currentFilm = null;
 
-        /* -------------------------------------------------------------
-           USUÁRIOS PRÉ-CADASTRADOS
-        ------------------------------------------------------------- */
-        const PREDEFINED_USERS = [
-            { username: "admin", password: "admin123", isAdmin: true },
-            { username: "arthur", password: "cinema123", isAdmin: false },
-            { username: "beatriz", password: "filmes456", isAdmin: false },
-            { username: "carlos", password: "schaccine789", isAdmin: false },
-            { username: "diana", password: "goth123", isAdmin: false },
-            { username: "eduardo", password: "dark456", isAdmin: false },
-            { username: "fernanda", password: "horror789", isAdmin: false },
-            { username: "gabriel", password: "suspense123", isAdmin: false },
-            { username: "helena", password: "drama456", isAdmin: false },
-            { username: "igor", password: "thriller789", isAdmin: false },
-            { username: "julia", password: "fantasy123", isAdmin: false }
-        ];
-
-        /* -------------------------------------------------------------
-           UTILITÁRIOS
-        ------------------------------------------------------------- */
+        // Elementos DOM
         const $ = (sel) => document.querySelector(sel);
         const $$ = (sel) => document.querySelectorAll(sel);
 
+        // ==========================
+        // FUNÇÕES UTILITÁRIAS
+        // ==========================
         // Notificação toast
         const toast = (msg, type = "info", dur = 3000) => {
             const el = document.createElement("div");
@@ -1504,7 +1488,7 @@
             });
         };
 
-        // Processar URL do YouTube
+        // Processar URL do vídeo
         const processVideoUrl = (url) => {
             if (!url) return "";
 
@@ -1528,60 +1512,19 @@
                               url.match(/id=([^&]+)/)?.[1];
                 return fileId ?
                   `https://drive.google.com/file/d/${fileId}/preview` : url;
-                              }
-
-                              return url; // Retorna original se não for nenhum dos casos acima
-                          };
-
-        /* -------------------------------------------------------------
-           GERENCIAMENTO DE ESTADO
-        ------------------------------------------------------------- */
-        // Obter dados do localStorage
-        const getStorageData = (key) => {
-            const data = localStorage.getItem(key);
-            return data ? JSON.parse(data) : null;
-        };
-
-        // Salvar dados no localStorage
-        const setStorageData = (key, value) => {
-            localStorage.setItem(key, JSON.stringify(value));
-        };
-
-        // Verificar se usuário está logado
-        const checkAuth = () => {
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (user) {
-                $("#authSection").classList.add("hidden");
-                $("#loadingSection").classList.remove("hidden");
-                
-                // Simular carregamento
-                setTimeout(() => {
-                    $("#filmsSection").classList.remove("hidden");
-                    $("#profileBtn").classList.remove("hidden");
-                    $("#userAvatarBtn").classList.remove("hidden");
-                    $("#loadingSection").classList.add("hidden");
-
-                    // Mostrar seção de upload apenas para admin
-                    if (user.isAdmin) {
-                        $("#uploadSection").classList.remove("hidden");
-                    }
-                    
-                    loadFilms();
-                }, 1500);
-            } else {
-                $("#authSection").classList.remove("hidden");
             }
+
+            return url; // Retorna original se não for nenhum dos casos acima
         };
 
-        /* -------------------------------------------------------------
-           AUTENTICAÇÃO
-        ------------------------------------------------------------- */
-        // Login
+        // ==========================
+        // AUTENTICAÇÃO
+        // ==========================
         const login = () => {
-            const userInput = $("#authUser").value.trim();
-            const passInput = $("#authPass").value.trim();
+            const email = $("#authUser").value.trim();
+            const password = $("#authPass").value.trim();
 
-            if (!userInput || !passInput) {
+            if (!email || !password) {
                 $("#authMsg").textContent = "Preencha todos os campos!";
                 return;
             }
@@ -1590,42 +1533,26 @@
             $("#authSection").classList.add("hidden");
             $("#loadingSection").classList.remove("hidden");
 
-            // Simular tempo de autenticação
-            setTimeout(() => {
-                const user = PREDEFINED_USERS.find(u => 
-                    u.username === userInput && u.password === passInput
-                );
-
-                if (user) {
-                    setStorageData(STORAGE_KEYS.currentUser, { 
-                        user: user.username, 
-                        isAdmin: user.isAdmin 
-                    });
-                    
-                    toast(`Bem-vindo, ${user.username}!`, "success");
+            auth.signInWithEmailAndPassword(email + "@schaccine.com", password)
+                .then((userCredential) => {
+                    // Usuário logado com sucesso
+                    currentUser = userCredential.user;
                     checkAuth();
-                } else {
+                    toast("Login realizado com sucesso!", "success");
+                })
+                .catch((error) => {
                     $("#authSection").classList.remove("hidden");
                     $("#loadingSection").classList.add("hidden");
-                    toast("Usuário ou senha incorretos!", "error");
-                }
-            }, 1500);
+                    toast("Erro no login: " + error.message, "error");
+                });
         };
 
-        // Registrar
         const register = () => {
-            const userInput = $("#authUser").value.trim();
-            const passInput = $("#authPass").value.trim();
+            const username = $("#authUser").value.trim();
+            const password = $("#authPass").value.trim();
 
-            if (!userInput || !passInput) {
+            if (!username || !password) {
                 $("#authMsg").textContent = "Preencha todos os campos!";
-                return;
-            }
-
-            // Verificar se usuário já existe
-            const userExists = PREDEFINED_USERS.some(u => u.username === userInput);
-            if (userExists) {
-                toast("Nome de usuário já existe!", "error");
                 return;
             }
 
@@ -1633,67 +1560,118 @@
             $("#authSection").classList.add("hidden");
             $("#loadingSection").classList.remove("hidden");
 
-            // Simular registro
-            setTimeout(() => {
-                // Criar novo usuário (não-admin)
-                const newUser = {
-                    username: userInput,
-                    password: passInput,
-                    isAdmin: false
-                };
-                
-                // Em um sistema real, você enviaria para um backend
-                setStorageData(STORAGE_KEYS.currentUser, { 
-                    user: newUser.username, 
-                    isAdmin: newUser.isAdmin 
+            const email = username + "@schaccine.com";
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Usuário criado com sucesso
+                    currentUser = userCredential.user;
+                    
+                    // Salvar informações adicionais do usuário
+                    return usersRef.child(currentUser.uid).set({
+                        username: username,
+                        avatar: "https://placehold.co/150x150?text=Foto",
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+                    });
+                })
+                .then(() => {
+                    checkAuth();
+                    toast("Conta criada com sucesso!", "success");
+                })
+                .catch((error) => {
+                    $("#authSection").classList.remove("hidden");
+                    $("#loadingSection").classList.add("hidden");
+                    toast("Erro no registro: " + error.message, "error");
                 });
-                
-                toast(`Conta criada com sucesso, ${newUser.username}!`, "success");
-                checkAuth();
-            }, 1500);
         };
 
-        // Logout
         const logout = () => {
-            localStorage.removeItem(STORAGE_KEYS.currentUser);
-            $("#authSection").classList.remove("hidden");
-            $("#filmsSection").classList.add("hidden");
-            $("#profileSection").classList.add("hidden");
-            $("#profileBtn").classList.add("hidden");
-            $("#userAvatarBtn").classList.add("hidden");
-            $("#uploadSection").classList.add("hidden");
+            auth.signOut().then(() => {
+                currentUser = null;
+                $("#authSection").classList.remove("hidden");
+                $("#filmsSection").classList.add("hidden");
+                $("#profileSection").classList.add("hidden");
+                $("#profileBtn").classList.add("hidden");
+                $("#userAvatarBtn").classList.add("hidden");
+                $("#uploadSection").classList.add("hidden");
 
-            // Resetar campos
-            $("#authUser").value = "";
-            $("#authPass").value = "";
-            $("#authMsg").textContent = "";
+                // Resetar campos
+                $("#authUser").value = "";
+                $("#authPass").value = "";
+                $("#authMsg").textContent = "";
+                
+                toast("Você saiu da sua conta", "info");
+            });
         };
 
-        /* -------------------------------------------------------------
-           GERENCIAMENTO DE FILMES
-        ------------------------------------------------------------- */
-        // Carregar filmes
+        const checkAuth = () => {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    
+                    // Carregar informações do usuário
+                    usersRef.child(user.uid).once('value').then((snapshot) => {
+                        const userData = snapshot.val();
+                        
+                        // Atualizar UI
+                        $("#profileUsername").textContent = userData.username || user.email.split('@')[0];
+                        $("#userAvatarBtn").src = userData.avatar || "https://placehold.co/150x150?text=Foto";
+                        $("#profilePic").src = userData.avatar || "https://placehold.co/150x150?text=Foto";
+                        
+                        // Verificar se é admin
+                        if (user.email === "admin@schaccine.com") {
+                            $("#uploadSection").classList.remove("hidden");
+                        }
+                        
+                        // Mostrar seções apropriadas
+                        $("#authSection").classList.add("hidden");
+                        $("#loadingSection").classList.add("hidden");
+                        $("#filmsSection").classList.remove("hidden");
+                        $("#profileBtn").classList.remove("hidden");
+                        $("#userAvatarBtn").classList.remove("hidden");
+                        
+                        // Carregar filmes
+                        loadFilms();
+                    });
+                } else {
+                    // Usuário não autenticado
+                    $("#authSection").classList.remove("hidden");
+                    $("#loadingSection").classList.add("hidden");
+                    $("#filmsSection").classList.add("hidden");
+                    $("#profileSection").classList.add("hidden");
+                    $("#profileBtn").classList.add("hidden");
+                    $("#userAvatarBtn").classList.add("hidden");
+                    $("#uploadSection").classList.add("hidden");
+                }
+            });
+        };
+
+        // ==========================
+        // GERENCIAMENTO DE FILMES
+        // ==========================
         const loadFilms = () => {
-            let films = getStorageData(STORAGE_KEYS.films) || [];
-            const sortBy = $("#sortSelect").value;
-
-            // Ordenar filmes
-            switch (sortBy) {
-                case "title":
-                    films.sort((a, b) => a.title.localeCompare(b.title));
-                    break;
-                case "rating":
-                    films.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-                    break;
-                case "latest":
-                default:
-                    films.sort((a, b) => b.timestamp - a.timestamp);
-            }
-
-            renderFilms(films);
+            filmsRef.once('value').then((snapshot) => {
+                const filmsData = snapshot.val();
+                const films = filmsData ? Object.values(filmsData) : [];
+                
+                const sortBy = $("#sortSelect").value;
+                
+                // Ordenação
+                switch (sortBy) {
+                    case "title": 
+                        films.sort((a, b) => a.title.localeCompare(b.title)); 
+                        break;
+                    case "rating": 
+                        films.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0)); 
+                        break;
+                    default: 
+                        films.sort((a, b) => b.timestamp - a.timestamp);
+                }
+                
+                renderFilms(films);
+            });
         };
 
-        // Renderizar filmes
         const renderFilms = (films) => {
             const filmGrid = $("#filmList");
             filmGrid.innerHTML = "";
@@ -1703,22 +1681,22 @@
                 return;
             }
 
-            films.forEach((film, index) => {
+            films.forEach((film) => {
                 const filmCard = document.createElement("div");
                 filmCard.className = "film-card";
-                filmCard.dataset.index = index;
+                filmCard.dataset.id = film.id;
 
-                const rating = film.rating ? film.rating.toFixed(1) : "N/A";
+                const rating = film.avgRating ? film.avgRating.toFixed(1) : "N/A";
 
                 filmCard.innerHTML = `
                     <div class="film-thumb-container">
                         <img src="${film.thumb}" class="film-thumb" alt="${film.title}" />
                         <div class="film-overlay">
                             <div class="film-actions">
-                                <button class="action-btn" onclick="event.stopPropagation(); showFilmDetail(${index})">
+                                <button class="action-btn" onclick="event.stopPropagation(); showFilmDetail('${film.id}')">
                                     <i class="fas fa-play"></i>
                                 </button>
-                                <button class="action-btn" onclick="event.stopPropagation(); addToFavorites(${index})">
+                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite('${film.id}')">
                                     <i class="far fa-heart"></i>
                                 </button>
                             </div>
@@ -1733,12 +1711,11 @@
                     </div>
                 `;
 
-                filmCard.addEventListener("click", () => showFilmDetail(index));
+                filmCard.addEventListener("click", () => showFilmDetail(film.id));
                 filmGrid.appendChild(filmCard);
             });
         };
 
-        // Upload de filme
         const uploadFilm = () => {
             const title = $("#filmTitle").value.trim();
             const category = $("#filmCategory").value;
@@ -1751,7 +1728,6 @@
                 return;
             }
 
-            const films = getStorageData(STORAGE_KEYS.films) || [];
             const newFilm = {
                 id: Date.now().toString(),
                 title,
@@ -1759,66 +1735,68 @@
                 url,
                 thumb,
                 synopsis,
-                timestamp: Date.now(),
-                rating: 0,
-                ratings: []
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                addedBy: currentUser.uid,
+                avgRating: 0,
+                ratingsCount: 0
             };
 
-            films.unshift(newFilm);
-            setStorageData(STORAGE_KEYS.films, films);
-
-            // Limpar formulário
-            $("#filmTitle").value = "";
-            $("#filmURL").value = "";
-            $("#filmThumb").value = "";
-            $("#filmSynopsis").value = "";
-
-            toast("Filme adicionado com sucesso!", "success");
-            loadFilms();
+            filmsRef.child(newFilm.id).set(newFilm)
+                .then(() => {
+                    // Limpar formulário
+                    $("#filmTitle").value = "";
+                    $("#filmURL").value = "";
+                    $("#filmThumb").value = "";
+                    $("#filmSynopsis").value = "";
+                    
+                    toast("Filme adicionado com sucesso!", "success");
+                    loadFilms();
+                })
+                .catch((error) => {
+                    toast("Erro ao adicionar filme: " + error.message, "error");
+                });
         };
 
-        /* -------------------------------------------------------------
-           DETALHES DO FILME
-        ------------------------------------------------------------- */
-        // Mostrar detalhes do filme
-        const showFilmDetail = (index) => {
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (index < 0 || index >= films.length) return;
-
-            const film = films[index];
-            currentFilmIndex = index;
-            currentFilmId = film.id;
-
-            // Preencher dados do modal
-            $("#filmDetailTitle").textContent = film.title;
-            $("#filmDetailCategory").textContent = film.category;
-            $("#filmDetailBackdrop").src = film.thumb;
-            $("#filmDetailSynopsis").textContent = film.synopsis;
-            $("#filmDetailDate").textContent = formatDate(film.timestamp);
-            $("#filmDetailPlayer").src = processVideoUrl(film.url);
-
-            // Atualizar avaliação
-            updateRatingDisplay(film.rating);
-
-            // Verificar se é favorito
-            checkFavoriteStatus();
-
-            // Carregar comentários
-            loadComments();
-
-            // Mostrar modal
-            $("#filmDetailModal").style.display = "block";
-            document.body.style.overflow = "hidden";
+        // ==========================
+        // DETALHES DO FILME
+        // ==========================
+        const showFilmDetail = (filmId) => {
+            currentFilmId = filmId;
+            
+            filmsRef.child(filmId).once('value').then((snapshot) => {
+                currentFilm = snapshot.val();
+                
+                if (!currentFilm) return;
+                
+                // Preencher dados do modal
+                $("#filmDetailTitle").textContent = currentFilm.title;
+                $("#filmDetailCategory").textContent = currentFilm.category;
+                $("#filmDetailBackdrop").src = currentFilm.thumb;
+                $("#filmDetailSynopsis").textContent = currentFilm.synopsis;
+                $("#filmDetailDate").textContent = formatDate(currentFilm.timestamp);
+                $("#filmDetailPlayer").src = processVideoUrl(currentFilm.url);
+                
+                // Atualizar avaliação
+                updateRatingDisplay(currentFilm.avgRating || 0);
+                
+                // Verificar se é favorito
+                checkFavoriteStatus(filmId);
+                
+                // Carregar comentários
+                loadComments(filmId);
+                
+                // Mostrar modal
+                $("#filmDetailModal").style.display = "block";
+                document.body.style.overflow = "hidden";
+            });
         };
 
-        // Fechar detalhes do filme
         const closeFilmDetail = () => {
             $("#filmDetailModal").style.display = "none";
             document.body.style.overflow = "auto";
             $("#filmDetailPlayer").src = "";
         };
 
-        // Atualizar exibição da avaliação
         const updateRatingDisplay = (rating) => {
             const ratingContainer = $("#filmDetailRating");
             ratingContainer.innerHTML = "";
@@ -1845,126 +1823,102 @@
             ratingContainer.innerHTML += ` <span>(${rating.toFixed(1)})</span>`;
         };
 
-        /* -------------------------------------------------------------
-           AVALIAÇÕES
-        ------------------------------------------------------------- */
-        // Configurar estrelas de avaliação
-        const setupRatingStars = () => {
-            const stars = $$("#filmRatingStars .fa-star");
-            stars.forEach(star => {
-                star.addEventListener("click", () => rateFilm(parseInt(star.dataset.rating)));
-                star.addEventListener("mouseover", (e) => highlightStars(e.target.dataset.rating));
-                star.addEventListener("mouseout", resetStarsHighlight);
-            });
-        };
-
-        // Destacar estrelas ao passar o mouse
-        const highlightStars = (rating) => {
-            const stars = $$("#filmRatingStars .fa-star");
-            stars.forEach((star, index) => {
-                if (index < rating) {
-                    star.classList.add("filled");
-                } else {
-                    star.classList.remove("filled");
-                }
-            });
-        };
-
-        // Resetar destaque das estrelas
-        const resetStarsHighlight = () => {
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
-
-            const film = films[currentFilmIndex];
-            const userRating = film.ratings?.find(r => r.user === getStorageData(STORAGE_KEYS.currentUser)?.user);
-
-            const stars = $$("#filmRatingStars .fa-star");
-            stars.forEach((star, index) => {
-                if (userRating && index < userRating.rating) {
-                    star.classList.add("filled");
-                } else {
-                    star.classList.remove("filled");
-                }
-            });
-        };
-
-        // Avaliar filme
+        // ==========================
+        // AVALIAÇÕES
+        // ==========================
         const rateFilm = (rating) => {
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) {
+            if (!currentUser || !currentFilmId) {
                 toast("Faça login para avaliar filmes", "error");
                 return;
             }
 
-            let films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
-
-            const film = films[currentFilmIndex];
-
-            // Remover avaliação existente do usuário
-            film.ratings = film.ratings?.filter(r => r.user !== user.user) || [];
-
-            // Adicionar nova avaliação
-            film.ratings.push({
-                user: user.user,
-                rating,
-                timestamp: Date.now()
+            const ratingRef = ratingsRef.child(currentFilmId).child(currentUser.uid);
+            
+            ratingRef.set({
+                rating: rating,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            })
+            .then(() => {
+                // Atualizar média de avaliações
+                updateAverageRating();
+                toast("Avaliação registrada!", "success");
+            })
+            .catch((error) => {
+                toast("Erro ao avaliar: " + error.message, "error");
             });
-
-            // Calcular nova média
-            const total = film.ratings.reduce((sum, r) => sum + r.rating, 0);
-            film.rating = total / film.ratings.length;
-
-            setStorageData(STORAGE_KEYS.films, films);
-
-            // Atualizar exibição
-            updateRatingDisplay(film.rating);
-            toast("Avaliação registrada!", "success");
         };
 
-        /* -------------------------------------------------------------
-           COMENTÁRIOS
-        ------------------------------------------------------------- */
-        // Carregar comentários
-        const loadComments = () => {
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
+        const updateAverageRating = () => {
+            ratingsRef.child(currentFilmId).once('value').then((snapshot) => {
+                const ratings = snapshot.val();
+                let total = 0;
+                let count = 0;
+                
+                if (ratings) {
+                    Object.values(ratings).forEach(rating => {
+                        total += rating.rating;
+                        count++;
+                    });
+                    
+                    const avgRating = total / count;
+                    
+                    // Atualizar no filme
+                    filmsRef.child(currentFilmId).update({
+                        avgRating: avgRating,
+                        ratingsCount: count
+                    })
+                    .then(() => {
+                        updateRatingDisplay(avgRating);
+                    });
+                }
+            });
+        };
 
-            const film = films[currentFilmIndex];
-            const comments = film.comments || [];
+        // ==========================
+        // COMENTÁRIOS
+        // ==========================
+        const loadComments = (filmId) => {
             const commentsList = $("#commentsList");
             commentsList.innerHTML = "";
 
-            if (comments.length === 0) {
-                commentsList.innerHTML = `<p style="text-align:center;color:#aaa;">Nenhum comentário ainda</p>`;
-                return;
-            }
+            commentsRef.child(filmId).on('value', (snapshot) => {
+                const comments = snapshot.val();
+                commentsList.innerHTML = "";
 
-            comments.sort((a, b) => b.timestamp - a.timestamp).forEach(comment => {
-                const commentEl = document.createElement("div");
-                commentEl.className = "comment-item";
-                commentEl.innerHTML = `
-                    <div class="comment-header">
-                        <span class="comment-author">${comment.user}</span>
-                        <span class="comment-date">${formatDate(comment.timestamp)}</span>
-                    </div>
-                    <p>${comment.text}</p>
-                    ${comment.user === getStorageData(STORAGE_KEYS.currentUser)?.user ? `
-                    <div class="comment-actions">
-                        <button class="comment-action" onclick="deleteComment('${comment.id}')">
-                            <i class="fas fa-trash"></i> Excluir
-                        </button>
-                    </div>
-                    ` : ''}
-                `;
-                commentsList.appendChild(commentEl);
+                if (!comments) {
+                    commentsList.innerHTML = `<p style="text-align:center;color:#aaa;">Nenhum comentário ainda</p>`;
+                    return;
+                }
+
+                // Converter para array e ordenar
+                const commentsArray = Object.entries(comments).map(([id, comment]) => ({ id, ...comment }));
+                commentsArray.sort((a, b) => b.timestamp - a.timestamp);
+
+                // Renderizar comentários
+                commentsArray.forEach(comment => {
+                    const commentEl = document.createElement("div");
+                    commentEl.className = "comment-item";
+                    commentEl.innerHTML = `
+                        <div class="comment-header">
+                            <span class="comment-author">${comment.username || "Usuário"}</span>
+                            <span class="comment-date">${formatDate(comment.timestamp)}</span>
+                        </div>
+                        <p>${comment.text}</p>
+                        ${comment.userId === currentUser.uid ? `
+                        <div class="comment-actions">
+                            <button class="comment-action" onclick="deleteComment('${filmId}', '${comment.id}')">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </div>
+                        ` : ''}
+                    `;
+                    commentsList.appendChild(commentEl);
+                });
             });
         };
 
-        // Adicionar comentário
         const addComment = () => {
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) {
+            if (!currentUser || !currentFilmId) {
                 toast("Faça login para comentar", "error");
                 return;
             }
@@ -1975,283 +1929,214 @@
                 return;
             }
 
-            let films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
-
-            const film = films[currentFilmIndex];
-            film.comments = film.comments || [];
-
-            film.comments.push({
-                id: Date.now().toString(),
-                user: user.user,
-                text,
-                timestamp: Date.now()
+            const commentRef = commentsRef.child(currentFilmId).push();
+            
+            commentRef.set({
+                text: text,
+                userId: currentUser.uid,
+                username: $("#profileUsername").textContent,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            })
+            .then(() => {
+                $("#commentInput").value = "";
+                toast("Comentário adicionado!", "success");
+            })
+            .catch((error) => {
+                toast("Erro ao adicionar comentário: " + error.message, "error");
             });
-
-            setStorageData(STORAGE_KEYS.films, films);
-
-            // Limpar e recarregar
-            $("#commentInput").value = "";
-            loadComments();
-            toast("Comentário adicionado!", "success");
         };
 
-        // Excluir comentário
-        const deleteComment = (commentId) => {
+        const deleteComment = (filmId, commentId) => {
             if (!confirm("Tem certeza que deseja excluir este comentário?")) return;
-
-            let films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
-
-            const film = films[currentFilmIndex];
-            film.comments = film.comments.filter(c => c.id !== commentId);
-
-            setStorageData(STORAGE_KEYS.films, films);
-            loadComments();
-            toast("Comentário excluído", "success");
+            
+            commentsRef.child(filmId).child(commentId).remove()
+                .then(() => {
+                    toast("Comentário excluído", "success");
+                })
+                .catch((error) => {
+                    toast("Erro ao excluir comentário: " + error.message, "error");
+                });
         };
 
-        /* -------------------------------------------------------------
-           FAVORITOS
-        ------------------------------------------------------------- */
-        // Verificar status de favorito
-        const checkFavoriteStatus = () => {
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) return;
+        // ==========================
+        // FAVORITOS
+        // ==========================
+        const checkFavoriteStatus = (filmId) => {
+            if (!currentUser) return;
 
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
-
-            const film = films[currentFilmIndex];
-            const favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
-
-            const isFavorite = favorites.some(favId => favId === film.id);
-            const btn = $("#favoriteBtn");
-
-            if (isFavorite) {
-                btn.innerHTML = '<i class="fas fa-heart"></i> Remover dos Favoritos';
-                btn.style.backgroundColor = "var(--primary-alt)";
-            } else {
-                btn.innerHTML = '<i class="far fa-heart"></i> Adicionar aos Favoritos';
-                btn.style.backgroundColor = "";
-            }
+            favoritesRef.child(currentUser.uid).child(filmId).once('value')
+                .then((snapshot) => {
+                    const isFavorite = snapshot.exists();
+                    const btn = $("#favoriteBtn");
+                    
+                    if (isFavorite) {
+                        btn.innerHTML = '<i class="fas fa-heart"></i> Remover dos Favoritos';
+                        btn.style.backgroundColor = "var(--primary-alt)";
+                    } else {
+                        btn.innerHTML = '<i class="far fa-heart"></i> Adicionar aos Favoritos';
+                        btn.style.backgroundColor = "";
+                    }
+                });
         };
 
-        // Alternar favorito
         const toggleFavorite = () => {
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) {
+            if (!currentUser || !currentFilmId) {
                 toast("Faça login para usar favoritos", "error");
                 return;
             }
 
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
-
-            const film = films[currentFilmIndex];
-            let favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
-
-            const index = favorites.indexOf(film.id);
-            if (index === -1) {
-                favorites.push(film.id);
-                toast("Adicionado aos favoritos", "success");
-            } else {
-                favorites.splice(index, 1);
-                toast("Removido dos favoritos", "success");
-            }
-
-            setStorageData(`${STORAGE_KEYS.currentUser}_favorites`, favorites);
-            checkFavoriteStatus();
-            updateProfileStats();
+            const favoriteRef = favoritesRef.child(currentUser.uid).child(currentFilmId);
+            
+            favoriteRef.once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    // Remover dos favoritos
+                    favoriteRef.remove()
+                        .then(() => {
+                            toast("Removido dos favoritos", "success");
+                            checkFavoriteStatus(currentFilmId);
+                            updateProfileStats();
+                        });
+                } else {
+                    // Adicionar aos favoritos
+                    favoriteRef.set(true)
+                        .then(() => {
+                            toast("Adicionado aos favoritos", "success");
+                            checkFavoriteStatus(currentFilmId);
+                            updateProfileStats();
+                        });
+                }
+            });
         };
 
-        // Carregar favoritos no perfil
         const loadFavorites = () => {
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) return;
+            if (!currentUser) return;
 
-            const favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
-            const films = getStorageData(STORAGE_KEYS.films) || [];
+            const favoriteList = $("#favouriteList");
+            favoriteList.innerHTML = "";
 
-            const favoriteFilms = films.filter(film => favorites.includes(film.id));
-            renderFavorites(favoriteFilms);
-        };
+            favoritesRef.child(currentUser.uid).once('value').then((snapshot) => {
+                const favorites = snapshot.val();
+                
+                if (!favorites) {
+                    favoriteList.innerHTML = `<p style="grid-column:1/-1;text-align:center;">Nenhum filme favorito</p>`;
+                    return;
+                }
+                
+                const filmIds = Object.keys(favorites);
+                
+                // Buscar detalhes dos filmes favoritos
+                filmIds.forEach(filmId => {
+                    filmsRef.child(filmId).once('value').then((filmSnapshot) => {
+                        const film = filmSnapshot.val();
+                        if (!film) return;
+                        
+                        const filmCard = document.createElement("div");
+                        filmCard.className = "film-card";
+                        filmCard.dataset.id = film.id;
 
-        // Renderizar favoritos
-        const renderFavorites = (films) => {
-            const container = $("#favouriteList");
-            container.innerHTML = "";
+                        const rating = film.avgRating ? film.avgRating.toFixed(1) : "N/A";
 
-            if (films.length === 0) {
-                container.innerHTML = `<p style="grid-column:1/-1;text-align:center;">Nenhum filme favorito</p>`;
-                return;
-            }
-
-            films.forEach((film, index) => {
-                const filmCard = document.createElement("div");
-                filmCard.className = "film-card";
-
-                filmCard.innerHTML = `
-                    <div class="film-thumb-container">
-                        <img src="${film.thumb}" class="film-thumb" alt="${film.title}" />
-                        <div class="film-overlay">
-                            <div class="film-actions">
-                                <button class="action-btn" onclick="event.stopPropagation(); showFilmDetail(${films.indexOf(film)})">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavoriteFromProfile('${film.id}')">
-                                    <i class="fas fa-heart"></i>
-                                </button>
+                        filmCard.innerHTML = `
+                            <div class="film-thumb-container">
+                                <img src="${film.thumb}" class="film-thumb" alt="${film.title}" />
+                                <div class="film-overlay">
+                                    <div class="film-actions">
+                                        <button class="action-btn" onclick="event.stopPropagation(); showFilmDetail('${film.id}')">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                        <button class="action-btn" onclick="event.stopPropagation(); toggleFavorite('${film.id}')">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="film-info">
-                        <h3 class="film-title">${film.title}</h3>
-                        <div class="film-meta">
-                            <span class="film-category">${film.category}</span>
-                            <span>⭐ ${film.rating ? film.rating.toFixed(1) : "N/A"}</span>
-                        </div>
-                    </div>
-                `;
+                            <div class="film-info">
+                                <h3 class="film-title">${film.title}</h3>
+                                <div class="film-meta">
+                                    <span class="film-category">${film.category}</span>
+                                    <span>⭐ ${rating}</span>
+                                </div>
+                            </div>
+                        `;
 
-                filmCard.addEventListener("click", () => {
-                    const allFilms = getStorageData(STORAGE_KEYS.films) || [];
-                    const mainIndex = allFilms.findIndex(f => f.id === film.id);
-                    if (mainIndex !== -1) showFilmDetail(mainIndex);
+                        filmCard.addEventListener("click", () => showFilmDetail(film.id));
+                        favoriteList.appendChild(filmCard);
+                    });
                 });
-
-                container.appendChild(filmCard);
             });
         };
 
-        // Alternar favorito do perfil
-        const toggleFavoriteFromProfile = (filmId) => {
-            event.stopPropagation();
-
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) return;
-
-            let favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
-            const index = favorites.indexOf(filmId);
-
-            if (index === -1) {
-                favorites.push(filmId);
-                toast("Adicionado aos favoritos", "success");
-            } else {
-                favorites.splice(index, 1);
-                toast("Removido dos favoritos", "success");
-            }
-
-            setStorageData(`${STORAGE_KEYS.currentUser}_favorites`, favorites);
-            loadFavorites();
-            updateProfileStats();
-        };
-
-        // Exportar favoritos
-        const exportFavourites = () => {
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) return;
-
-            const favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-
-            const favoriteFilms = films.filter(film => favorites.includes(film.id));
-
-            if (favoriteFilms.length === 0) {
-                toast("Nenhum favorito para exportar", "error");
-                return;
-            }
-
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Título,Categoria,Avaliação,URL\n";
-
-            favoriteFilms.forEach(film => {
-                const row = [
-                    `"${film.title}"`,
-                    `"${film.category}"`,
-                    film.rating ? film.rating.toFixed(1) : "N/A",
-                    `"${film.url}"`
-                ].join(",");
-                csvContent += row + "\n";
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `schaccine_favoritos_${user.user}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            toast("Favoritos exportados com sucesso!", "success");
-        };
-
-        /* -------------------------------------------------------------
-           PERFIL DO USUÁRIO
-        ------------------------------------------------------------- */
-        // Mostrar perfil
+        // ==========================
+        // PERFIL DO USUÁRIO
+        // ==========================
         const showProfile = () => {
             $("#filmsSection").classList.add("hidden");
             $("#profileSection").classList.remove("hidden");
-
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) return;
-
-            $("#profileUsername").textContent = user.user;
             updateProfileStats();
             loadFavorites();
         };
 
-        // Atualizar estatísticas do perfil
         const updateProfileStats = () => {
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (!user) return;
+            if (!currentUser) return;
 
-            const favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-
-            // Contar comentários do usuário
-            let commentsCount = 0;
-            films.forEach(film => {
-                if (film.comments) {
-                    commentsCount += film.comments.filter(c => c.user === user.user).length;
-                }
+            // Contar favoritos
+            favoritesRef.child(currentUser.uid).once('value').then((favoritesSnapshot) => {
+                const favoritesCount = favoritesSnapshot.exists() ? Object.keys(favoritesSnapshot.val()).length : 0;
+                $("#profileFavCount").textContent = favoritesCount;
             });
 
-            $("#profileFavCount").textContent = favorites.length;
-            $("#profileCommentsCount").textContent = commentsCount;
+            // Contar comentários
+            commentsRef.orderByChild('userId').equalTo(currentUser.uid).once('value')
+                .then((commentsSnapshot) => {
+                    const commentsCount = commentsSnapshot.exists() ? Object.keys(commentsSnapshot.val()).length : 0;
+                    $("#profileCommentsCount").textContent = commentsCount;
+                });
         };
 
-        // Voltar para a lista de filmes
         const backToFilms = () => {
             $("#profileSection").classList.add("hidden");
             $("#filmsSection").classList.remove("hidden");
         };
 
-        // Visualizar foto de perfil antes de enviar
-        const previewProfilePic = (input) => {
+        const uploadProfilePic = (input) => {
+            if (!currentUser) return;
+            
             if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    $("#profilePic").src = e.target.result;
-                    $("#userAvatarBtn").src = e.target.result;
-
-                    // Salvar no localStorage (simulação)
-                    const user = getStorageData(STORAGE_KEYS.currentUser);
-                    if (user) {
-                        user.avatar = e.target.result;
-                        setStorageData(STORAGE_KEYS.currentUser, user);
-                    }
-                };
-                reader.readAsDataURL(input.files[0]);
-                toast("Foto de perfil atualizada!", "success");
+                const file = input.files[0];
+                const storageRef = storage.ref(`profile_pictures/${currentUser.uid}`);
+                
+                // Mostrar loader
+                $("#loadingSection").classList.remove("hidden");
+                
+                // Fazer upload do arquivo
+                storageRef.put(file)
+                    .then((snapshot) => {
+                        return snapshot.ref.getDownloadURL();
+                    })
+                    .then((downloadURL) => {
+                        // Atualizar URL no banco de dados
+                        return usersRef.child(currentUser.uid).update({
+                            avatar: downloadURL
+                        });
+                    })
+                    .then(() => {
+                        // Atualizar imagem na UI
+                        $("#profilePic").src = downloadURL;
+                        $("#userAvatarBtn").src = downloadURL;
+                        
+                        toast("Foto de perfil atualizada!", "success");
+                        $("#loadingSection").classList.add("hidden");
+                    })
+                    .catch((error) => {
+                        toast("Erro ao atualizar foto: " + error.message, "error");
+                        $("#loadingSection").classList.add("hidden");
+                    });
             }
         };
 
-        /* -------------------------------------------------------------
-           TEMAS
-        ------------------------------------------------------------- */
-        // Alternar tema claro/escuro
+        // ==========================
+        // TEMAS
+        // ==========================
         const toggleTheme = () => {
             const currentTheme = document.body.getAttribute("data-theme");
             const newTheme = currentTheme === "light" ? null : "light";
@@ -2260,12 +2145,12 @@
             const icon = $("#toggleThemeBtn i");
             icon.className = newTheme === "light" ? "fas fa-sun" : "fas fa-moon";
 
-            setStorageData("schaccine_theme", newTheme);
+            // Salvar preferência no localStorage
+            localStorage.setItem("schaccine_theme", newTheme);
         };
 
-        // Carregar tema salvo
         const loadTheme = () => {
-            const savedTheme = getStorageData("schaccine_theme");
+            const savedTheme = localStorage.getItem("schaccine_theme");
             if (savedTheme) {
                 document.body.setAttribute("data-theme", savedTheme);
                 const icon = $("#toggleThemeBtn i");
@@ -2273,16 +2158,16 @@
             }
         };
 
-        /* -------------------------------------------------------------
-           INICIALIZAÇÃO
-        ------------------------------------------------------------- */
+        // ==========================
+        // INICIALIZAÇÃO
+        // ==========================
         document.addEventListener("DOMContentLoaded", () => {
             // Carregar tema
             loadTheme();
-
+            
             // Verificar autenticação
             checkAuth();
-
+            
             // Configurar atalho de pesquisa
             document.addEventListener("keydown", (e) => {
                 if (e.key === "/" && e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
@@ -2294,92 +2179,26 @@
             // Configurar pesquisa
             $("#searchBar").addEventListener("input", (e) => {
                 const term = e.target.value.toLowerCase();
-                const films = getStorageData(STORAGE_KEYS.films) || [];
+                
+                filmsRef.once('value').then((snapshot) => {
+                    const filmsData = snapshot.val();
+                    const films = filmsData ? Object.values(filmsData) : [];
+                    
+                    if (term === "") {
+                        loadFilms();
+                        return;
+                    }
 
-                if (term === "") {
-                    loadFilms();
-                    return;
-                }
+                    const filtered = films.filter(film => 
+                        film.title.toLowerCase().includes(term) || 
+                        film.category.toLowerCase().includes(term) ||
+                        film.synopsis.toLowerCase().includes(term)
+                    );
 
-                const filtered = films.filter(film => 
-                    film.title.toLowerCase().includes(term) || 
-                    film.category.toLowerCase().includes(term) ||
-                    film.synopsis.toLowerCase().includes(term)
-                );
-
-                renderFilms(filtered);
+                    renderFilms(filtered);
+                });
             });
-
-            // Configurar estrelas de avaliação
-            setupRatingStars();
-
-            // Carregar avatar do usuário se existir
-            const user = getStorageData(STORAGE_KEYS.currentUser);
-            if (user?.avatar) {
-                $("#profilePic").src = user.avatar;
-                $("#userAvatarBtn").src = user.avatar;
-            }
         });
-
-        /* -------------------------------------------------------------
-           FILMES MANUAIS (SEM FIREBASE)
-        ------------------------------------------------------------- */
-        function adicionarFilmesManuais() {
-            const filmesManuais = [
-                {
-                    title: "AFTER",
-                    category: "Terror",
-                    url: "https://www.youtube.com/watch?v=8cllqmrT_vI",
-                    thumb: "https://i.ytimg.com/vi/8cllqmrT_vI/hq720.jpg",
-                    synopsis: "Em um mundo pós-apocalíptico devastado, onde a realidade e o sobrenatural se entrelaçam, a jovem Alex tenta desvendar os mistérios de um evento cataclísmico que arruinou a humanidade. Sozinha e com apenas alguns sobreviventes, ela se vê presa em uma cidade desolada, onde forças sinistras e entidades demoníacas caçam os poucos que restam."
-                },
-                {
-                    title: "Journey to the Forbidden Valley",
-                    category: "Suspense",
-                    url: "https://www.youtube.com/watch?v=drSpRDyKrjU",
-                    thumb: "https://i.ytimg.com/vi/drSpRDyKrjU/hq720.jpg",
-                    synopsis: "No meio das florestas selvagens, onde a natureza guarda seus segredos, um menino e seu guardião se encontram em uma situação desesperadora. A jornada deles deveria ser simples, mas o destino tinha outros planos."
-                },
-                {
-                    title: "Homem com H",
-                    category: "Drama",
-                    url: "https://drive.google.com/file/d/1KD7BK9rBLbkbE8HzG3d6ZAqDfBzQASL4/view",
-                    thumb: "https://i.ytimg.com/vi/3OjEQDF70h4/maxresdefault.jpg",
-                    synopsis: "As diferentes fases da carreira do cantor Ney Matogrosso, desde a sua infância, passando pela adolescência e a vida adulta. Uma jornada através do tempo que acompanha um rapaz de origem humilde que quebra preconceitos e se torna um artista influente."
-                },
-                {
-                    title: "P2",
-                    category: "Suspense",
-                    url: "https://www.youtube.com/watch?v=gBLKT199O9g",
-                    thumb: "https://i.ytimg.com/vi/gBLKT199O9g/hq720.jpg",
-                    synopsis: "Uma empresária é perseguida por um psicopata após ficar trancada em um estacionamento na véspera de Natal."
-                },
-                {
-                    title: "Hard Candy",
-                    category: "Suspense",
-                    url: "https://www.youtube.com/watch?v=ODcko7WzHA8",
-                    thumb: "https://i.ytimg.com/vi/ODcko7WzHA8/hq720.jpg",
-                    synopsis: "Hayley é uma adolescente inteligente e charmosa. Jeff é um fotógrafo de moda bonito e elegante. Um bate-papo online, um encontro em uma cafeteria, um ensaio fotográfico improvisado na casa de Jeff. Jeff acha que é sua noite de sorte. Ele terá uma surpresa."
-                },
-                {
-                    title: "Cidade de Deus",
-                    category: "Ação",
-                    url: "https://drive.google.com/file/d/11lsnJWADHLBYfhUXKy4d_rfJ2XvnADkA/view",
-                    thumb: "https://i.ytimg.com/vi/vxYSM_sNm4A/maxresdefault.jpg",
-                    synopsis: "Buscapé é um jovem pobre, negro e sensível, que cresce em um universo de muita violência. Ele vive na Cidade de Deus, favela carioca conhecida por ser um dos locais mais violentos do Rio. Amedrontado com a possibilidade de se tornar um bandido, é salvo de seu destino por causa de seu talento como fotógrafo, que permite que siga carreira na profissão. É por meio de seu olhar atrás da câmera que ele analisa o dia a dia da favela em que vive, onde a violência aparenta não ter fim."
-                },
-                {
-                    title: "Possession (1981)",
-                    category: "Terror",
-                    url: "https://drive.google.com/file/d/1XxwgaAedteUktNjVAGPBmR5Uo0V124px/view",
-                    thumb: "https://i.ytimg.com/vi/aLXW-oVbTxE/maxresdefault.jpg",
-                    synopsis: "Após retornar de uma longa viagem, tudo que Marc quer é encontrar sua esposa Anna e seu filho novamente. No entanto, assim que chega a Berlim, Marc percebe que Anna mudou radicalmente de comportamento e, assim que pode, ela pede o divórcio. O homem inicialmente suspeita que ela foi infiel, contudo os eventos dão uma guinada sinistra e ele percebe que está em uma situação macabra."
-                }
-            ];
-
-            localStorage.setItem("schaccine_films", JSON.stringify(filmesManuais));
-        }
-        adicionarFilmesManuais();
     </script>
 </body>
 </html>
