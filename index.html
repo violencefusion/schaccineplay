@@ -52,6 +52,8 @@
 
         body {
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-dark-alt));
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
             color: var(--text-light);
             font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
@@ -84,6 +86,11 @@
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         /* ==========================
@@ -1615,7 +1622,7 @@
             const password = $("#authPass").value.trim();
 
             if (!username || !password) {
-                $("#authMsg").textContent = "Preencha todos os campos!";
+                toast("Preencha todos os campos!", "error");
                 return;
             }
 
@@ -1658,12 +1665,12 @@
             const password = $("#authPass").value.trim();
 
             if (!username || !password) {
-                $("#authMsg").textContent = "Preencha todos os campos!";
+                toast("Preencha todos os campos!", "error");
                 return;
             }
 
             if (password.length < 6) {
-                $("#authMsg").textContent = "A senha deve ter pelo menos 6 caracteres";
+                toast("A senha deve ter pelo menos 6 caracteres", "error");
                 return;
             }
 
@@ -2235,7 +2242,7 @@
                         id: filmId,
                         film: filmSnapshot.val()
                     }))
-                ).then(results => {
+                )).then(results => {
                     favoriteList.innerHTML = "";
                     
                     results.forEach(({id, film}) => {
@@ -2446,7 +2453,7 @@
             // Configurar estrelas de avaliação
             $("#filmRatingStars").addEventListener("click", (e) => {
                 if (e.target.classList.contains("star")) {
-                    const rating = parseInt(e.target.dataset.rating);
+                    const rating = parseInt(e.target.dataset.ating);
                     rateFilm(rating);
                 }
             });
