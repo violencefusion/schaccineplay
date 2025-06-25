@@ -2091,9 +2091,8 @@ const USERS_PERMITIDOS = [{'user': 'schaccine1', 'pass': 'senha123'}, {'user': '
                                                                   loadTheme();
 
                                                                   // Verificar autenticação
-                                                                  checkAuth();
-
-                                                                  // Carregar filmes se estiver logado
+                                                                  // checkAuth removido para segurança
+// Carregar filmes se estiver logado
                                                                   if (getStorageData(STORAGE_KEYS.currentUser)) {
                                                                       loadFilms();
                                                                   }
