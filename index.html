@@ -870,6 +870,23 @@
                                                 }
                                             }
                                         </style>
+<style>
+  .animated-auth {
+    animation: slideFadeIn 1.2s ease-in-out;
+  }
+
+  @keyframes slideFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
                                     
 <!-- Firebase Integration -->
 <script type="module">
@@ -933,6 +950,23 @@
     to { opacity: 0; visibility: hidden; }
   }
 </style>
+<style>
+  .animated-auth {
+    animation: slideFadeIn 1.2s ease-in-out;
+  }
+
+  @keyframes slideFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
 
                                         <!-- ============ HEADER ============ -->
                                         <header>
@@ -957,14 +991,14 @@
                                         <!-- ============ MAIN CONTENT ============ -->
                                         <div class="main-container">
                                             <!-- ============ AUTH SECTION ============ -->
-                                            <div class="auth-container" id="authSection">
+                                            <div class="auth-container animated-auth" id="authSection">
                                                 <h1 class="auth-title">Bem-vindo ao Schaccine</h1>
                                                 <input type="text" id="authUser" class="auth-input" placeholder="Usuário" autofocus />
                                                 <input type="password" id="authPass" class="auth-input" placeholder="Senha" />
 
                                                 <div class="auth-actions">
                                                     <button class="auth-btn primary" onclick="login()">Entrar</button>
-                                                    <button class="auth-btn secondary" onclick="register()">Registrar</button>
+                                                    
                                                 </div>
 
                                                 <div class="auth-message" id="authMsg"></div>
@@ -1137,6 +1171,7 @@
                                                CONFIGURAÇÕES GERAIS
                                             ------------------------------------------------------------- */
                                             const ADMIN = { user: "admin", pass: "admin123" };
+const USERS_PERMITIDOS = [{'user': 'schaccine1', 'pass': 'senha123'}, {'user': 'schaccine2', 'pass': 'senha123'}, {'user': 'schaccine3', 'pass': 'senha123'}, {'user': 'schaccine4', 'pass': 'senha123'}, {'user': 'schaccine5', 'pass': 'senha123'}, {'user': 'schaccine6', 'pass': 'senha123'}, {'user': 'schaccine7', 'pass': 'senha123'}, {'user': 'schaccine8', 'pass': 'senha123'}, {'user': 'schaccine9', 'pass': 'senha123'}, {'user': 'schaccine10', 'pass': 'senha123'}];
                                             const STORAGE_KEYS = {
                                                 currentUser: "schaccine_user",
                                                 films: "schaccine_films",
