@@ -872,65 +872,81 @@
                                         </style>
 <style>
   .auth-container {
-    background: linear-gradient(145deg, #121212, #1e1e1e);
+    background: linear-gradient(to bottom, #0d0d0d, #1c001c);
     border-radius: 12px;
-    padding: 40px;
+    box-shadow: 0 0 35px rgba(204, 0, 255, 0.3);
+    padding: 50px 40px;
     max-width: 400px;
     margin: 80px auto;
-    box-shadow: 0 0 25px rgba(204, 0, 255, 0.2);
-    animation: fadeSlide 1s ease-in-out;
+    animation: fadeSlide 0.8s ease-in-out;
+    position: relative;
+    overflow: hidden;
   }
   .auth-title {
-    font-size: 1.8em;
+    font-size: 2.2em;
+    font-weight: bold;
     color: #cc00ff;
-    text-align: center;
     margin-bottom: 10px;
+    text-align: center;
+    text-shadow: 0 0 15px #cc00ff77;
   }
   .auth-desc {
+    font-size: 1em;
     color: #aaa;
-    font-size: 0.95em;
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
   }
   .auth-container input {
-    background: #222;
-    color: #fff;
-    padding: 12px;
-    width: 100%;
+    background: #1b1b1b;
     border: 1px solid #333;
-    border-radius: 6px;
-    margin-bottom: 15px;
+    border-radius: 8px;
+    padding: 14px;
     font-size: 1em;
+    color: #fff;
+    margin-bottom: 18px;
+    width: 100%;
+    transition: border 0.2s;
+  }
+  .auth-container input:focus {
+    outline: none;
+    border-color: #cc00ff;
   }
   .auth-btn {
     background: #cc00ff;
-    color: white;
     border: none;
-    padding: 12px;
-    border-radius: 6px;
+    border-radius: 8px;
+    padding: 14px;
     width: 100%;
-    cursor: pointer;
     font-weight: bold;
-    transition: background 0.3s;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    box-shadow: 0 0 10px #cc00ff55;
+    transition: background 0.3s, transform 0.2s;
   }
   .auth-btn:hover {
-    background: #a000cc;
+    background: #a100cc;
+    transform: scale(1.02);
   }
   .auth-msg {
-    color: crimson;
-    font-size: 0.9em;
-    margin-top: 10px;
+    margin-top: 15px;
     text-align: center;
+    font-size: 0.95em;
+    color: crimson;
+  }
+  .shake {
+    animation: shake 0.3s ease-in-out;
   }
   @keyframes fadeSlide {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-6px); }
+    100% { transform: translateX(0); }
   }
 </style>
 
@@ -999,65 +1015,81 @@
 </style>
 <style>
   .auth-container {
-    background: linear-gradient(145deg, #121212, #1e1e1e);
+    background: linear-gradient(to bottom, #0d0d0d, #1c001c);
     border-radius: 12px;
-    padding: 40px;
+    box-shadow: 0 0 35px rgba(204, 0, 255, 0.3);
+    padding: 50px 40px;
     max-width: 400px;
     margin: 80px auto;
-    box-shadow: 0 0 25px rgba(204, 0, 255, 0.2);
-    animation: fadeSlide 1s ease-in-out;
+    animation: fadeSlide 0.8s ease-in-out;
+    position: relative;
+    overflow: hidden;
   }
   .auth-title {
-    font-size: 1.8em;
+    font-size: 2.2em;
+    font-weight: bold;
     color: #cc00ff;
-    text-align: center;
     margin-bottom: 10px;
+    text-align: center;
+    text-shadow: 0 0 15px #cc00ff77;
   }
   .auth-desc {
+    font-size: 1em;
     color: #aaa;
-    font-size: 0.95em;
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
   }
   .auth-container input {
-    background: #222;
-    color: #fff;
-    padding: 12px;
-    width: 100%;
+    background: #1b1b1b;
     border: 1px solid #333;
-    border-radius: 6px;
-    margin-bottom: 15px;
+    border-radius: 8px;
+    padding: 14px;
     font-size: 1em;
+    color: #fff;
+    margin-bottom: 18px;
+    width: 100%;
+    transition: border 0.2s;
+  }
+  .auth-container input:focus {
+    outline: none;
+    border-color: #cc00ff;
   }
   .auth-btn {
     background: #cc00ff;
-    color: white;
     border: none;
-    padding: 12px;
-    border-radius: 6px;
+    border-radius: 8px;
+    padding: 14px;
     width: 100%;
-    cursor: pointer;
     font-weight: bold;
-    transition: background 0.3s;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    box-shadow: 0 0 10px #cc00ff55;
+    transition: background 0.3s, transform 0.2s;
   }
   .auth-btn:hover {
-    background: #a000cc;
+    background: #a100cc;
+    transform: scale(1.02);
   }
   .auth-msg {
-    color: crimson;
-    font-size: 0.9em;
-    margin-top: 10px;
+    margin-top: 15px;
     text-align: center;
+    font-size: 0.95em;
+    color: crimson;
+  }
+  .shake {
+    animation: shake 0.3s ease-in-out;
   }
   @keyframes fadeSlide {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-6px); }
+    100% { transform: translateX(0); }
   }
 </style>
 
@@ -1092,7 +1124,7 @@
 
                                                 <div class="auth-actions">
                                                     <button class="auth-btn primary" onclick="login()">Entrar</button>
-                                                    <button class="auth-btn secondary" onclick="register()">Registrar</button>
+                                                    
                                                 </div>
 
                                                 <div class="auth-message" id="authMsg"></div>
