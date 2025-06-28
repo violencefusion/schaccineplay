@@ -94,6 +94,12 @@
             100% { box-shadow: var(--pulse); }
         }
 
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
         /* ==========================
            HEADER
         ========================== */
@@ -104,6 +110,7 @@
             background: linear-gradient(to bottom, rgba(13, 13, 13, 0.95), transparent);
             backdrop-filter: blur(10px);
             transition: var(--transition-slow);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .header-content {
@@ -123,10 +130,15 @@
             letter-spacing: 1px;
             transition: var(--transition);
             animation: pulse 3s infinite;
+            position: relative;
+            background: linear-gradient(90deg, #bb00ff, #7a00cc, #bb00ff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
         }
 
         .logo:hover {
-            text-shadow: 0 0 25px var(--primary);
             transform: scale(1.03);
         }
 
@@ -135,6 +147,7 @@
             opacity: 0.8;
             margin-top: 4px;
             letter-spacing: 1px;
+            color: #aaa;
         }
 
         .nav-bar {
@@ -232,6 +245,8 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: fadeIn 0.8s ease-out;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
 
         .auth-container::before {
@@ -257,6 +272,10 @@
             font-family: 'Unbounded', sans-serif;
             text-shadow: 0 0 10px rgba(187, 0, 255, 0.5);
             letter-spacing: 1px;
+            background: linear-gradient(90deg, #bb00ff, #7a00cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .auth-input-group {
@@ -283,6 +302,7 @@
             border-color: var(--primary);
             background: rgba(255, 255, 255, 0.2);
             box-shadow: 0 0 15px rgba(187, 0, 255, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
         }
 
         .auth-input-icon {
@@ -296,6 +316,7 @@
 
         .auth-input:focus + .auth-input-icon {
             color: var(--primary);
+            transform: translateY(-50%) scale(1.2);
         }
 
         .auth-actions {
@@ -485,6 +506,7 @@
             outline: none;
             background: rgba(255, 255, 255, 0.2);
             box-shadow: 0 0 0 3px var(--primary), inset 0 0 10px rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
         }
 
         .search-input::placeholder {
@@ -530,10 +552,11 @@
             cursor: pointer;
             transform-style: preserve-3d;
             perspective: 1000px;
+            transform: translateZ(0);
         }
 
         .content-card:hover {
-            transform: translateY(-15px) rotateX(5deg);
+            transform: translateY(-15px) rotateX(5deg) scale(1.03);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             z-index: 10;
         }
@@ -712,6 +735,10 @@
             margin-bottom: 15px;
             font-family: 'Unbounded', sans-serif;
             text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            background: linear-gradient(90deg, #bb00ff, #7a00cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .content-detail-meta {
@@ -2991,7 +3018,7 @@
 
             localStorage.setItem("schaccine_films", JSON.stringify(filmesManuais));
             
-            // Séries
+            // Séries - CORRIGIDO
             const seriesManuais = [
                 {
                     title: "Round 6",
@@ -3029,8 +3056,7 @@
                                 },
                                 {
                                     title: "Episódio 6: Gganbu",
-                                    synopsis: "Os jogadores formam duplas para o quarto jogo. Gi-hun enfrenta um dilema moral, Sang-woo escolhe se proteger e Sae-byeok conta sua história.
-",
+                                    synopsis: "Os jogadores formam duplas para o quarto jogo. Gi-hun enfrenta um dilema moral, Sang-woo escolhe se proteger e Sae-byeok conta sua história.",
                                     url: "https://watch.brplayer.cc/watch?v=TOIXBD41"
                                 },
                                 {
