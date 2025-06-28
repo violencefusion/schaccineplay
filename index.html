@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schaccine - Plataforma de Filmes Exclusiva</title>
+    <title>Schaccine - Filmes e Séries Góticas</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,6 +33,8 @@
             --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
             --transition: all 0.3s ease;
             --transition-slow: all 0.5s ease;
+            --glow: 0 0 15px rgba(187, 0, 255, 0.6);
+            --pulse: 0 0 0 0 rgba(187, 0, 255, 0.7);
         }
 
         [data-theme="light"] {
@@ -78,6 +80,18 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
+        }
+
+        @keyframes glow {
+            0% { box-shadow: var(--glow); }
+            50% { box-shadow: 0 0 25px rgba(187, 0, 255, 0.9); }
+            100% { box-shadow: var(--glow); }
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: var(--pulse); }
+            70% { box-shadow: 0 0 0 15px rgba(187, 0, 255, 0); }
+            100% { box-shadow: var(--pulse); }
         }
 
         /* ==========================
@@ -145,12 +159,14 @@
             box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
+            animation: glow 3s infinite;
         }
 
         .nav-btn:hover {
             background: var(--primary-hover);
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 10px 25px rgba(187, 0, 255, 0.5);
+            animation: pulse-glow 1.5s infinite;
         }
 
         .nav-btn::after {
@@ -387,6 +403,39 @@
         }
 
         /* ==========================
+           SECTIONS TOGGLE
+        ========================== */
+        .section-toggle {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 10px;
+        }
+
+        .section-toggle-btn {
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 30px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        .section-toggle-btn.active {
+            background: var(--primary-alt);
+            box-shadow: var(--shadow);
+        }
+
+        .section-toggle-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ==========================
            FILM SECTIONS
         ========================== */
         .section-title {
@@ -463,7 +512,7 @@
         /* ==========================
            FILM GRID
         ========================== */
-        .film-grid {
+        .content-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 25px;
@@ -471,7 +520,7 @@
             animation: fadeIn 0.8s ease-out;
         }
 
-        .film-card {
+        .content-card {
             background: var(--surface);
             border-radius: 15px;
             overflow: hidden;
@@ -483,20 +532,20 @@
             perspective: 1000px;
         }
 
-        .film-card:hover {
+        .content-card:hover {
             transform: translateY(-15px) rotateX(5deg);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             z-index: 10;
         }
 
-        .film-thumb-container {
+        .content-thumb-container {
             position: relative;
             width: 100%;
             padding-top: 150%;
             overflow: hidden;
         }
 
-        .film-thumb {
+        .content-thumb {
             position: absolute;
             top: 0;
             left: 0;
@@ -506,11 +555,11 @@
             transition: var(--transition-slow);
         }
 
-        .film-card:hover .film-thumb {
+        .content-card:hover .content-thumb {
             transform: scale(1.1);
         }
 
-        .film-overlay {
+        .content-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -525,15 +574,15 @@
             transition: var(--transition-slow);
         }
 
-        .film-card:hover .film-overlay {
+        .content-card:hover .content-overlay {
             opacity: 1;
         }
 
-        .film-info {
+        .content-info {
             padding: 20px;
         }
 
-        .film-title {
+        .content-title {
             font-weight: 700;
             margin-bottom: 8px;
             white-space: nowrap;
@@ -542,14 +591,14 @@
             font-size: 18px;
         }
 
-        .film-meta {
+        .content-meta {
             display: flex;
             justify-content: space-between;
             font-size: 14px;
             color: #aaa;
         }
 
-        .film-category {
+        .content-category {
             background: var(--primary-alt);
             color: white;
             padding: 5px 12px;
@@ -559,7 +608,7 @@
             letter-spacing: 0.5px;
         }
 
-        .film-actions {
+        .content-actions {
             position: absolute;
             top: 15px;
             right: 15px;
@@ -570,7 +619,7 @@
             transform: translateY(10px);
         }
 
-        .film-card:hover .film-actions {
+        .content-card:hover .content-actions {
             opacity: 1;
             transform: translateY(0);
         }
@@ -596,10 +645,23 @@
             box-shadow: 0 0 15px rgba(187, 0, 255, 0.8);
         }
 
+        .series-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 2;
+        }
+
         /* ==========================
            FILM DETAIL
         ========================== */
-        .film-detail-container {
+        .content-detail-container {
             display: none;
             position: fixed;
             top: 0;
@@ -613,7 +675,7 @@
             animation: fadeIn 0.5s ease;
         }
 
-        .film-detail-content {
+        .content-detail-content {
             max-width: 1200px;
             margin: 0 auto;
             background: var(--surface);
@@ -623,20 +685,20 @@
             animation: fadeIn 0.5s ease;
         }
 
-        .film-detail-header {
+        .content-detail-header {
             position: relative;
             height: 500px;
             overflow: hidden;
         }
 
-        .film-detail-backdrop {
+        .content-detail-backdrop {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: var(--transition-slow);
         }
 
-        .film-detail-overlay {
+        .content-detail-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -645,21 +707,21 @@
             background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
         }
 
-        .film-detail-title {
+        .content-detail-title {
             font-size: 42px;
             margin-bottom: 15px;
             font-family: 'Unbounded', sans-serif;
             text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
         }
 
-        .film-detail-meta {
+        .content-detail-meta {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
             align-items: center;
         }
 
-        .film-detail-rating {
+        .content-detail-rating {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -667,7 +729,7 @@
             font-size: 18px;
         }
 
-        .film-detail-close {
+        .content-detail-close {
             position: absolute;
             top: 25px;
             right: 25px;
@@ -684,20 +746,20 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
         }
 
-        .film-detail-close:hover {
+        .content-detail-close:hover {
             background: var(--primary);
             transform: rotate(90deg) scale(1.1);
             box-shadow: 0 0 20px rgba(187, 0, 255, 0.8);
         }
 
-        .film-detail-body {
+        .content-detail-body {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 35px;
             padding: 35px;
         }
 
-        .film-detail-player {
+        .content-detail-player {
             position: relative;
             padding-top: 56.25%; /* 16:9 Aspect Ratio */
             overflow: hidden;
@@ -706,7 +768,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .film-detail-player iframe {
+        .content-detail-player iframe {
             position: absolute;
             top: 0;
             left: 0;
@@ -715,28 +777,121 @@
             border: none;
         }
 
-        .film-detail-sidebar {
+        .content-detail-sidebar {
             display: flex;
             flex-direction: column;
             gap: 25px;
         }
 
-        .film-detail-synopsis {
+        .content-detail-synopsis {
             line-height: 1.8;
             font-size: 16px;
         }
 
-        .film-detail-info-item {
+        .content-detail-info-item {
             margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
         }
 
-        .film-detail-info-label {
+        .content-detail-info-label {
             font-weight: 700;
             color: var(--primary);
             margin-right: 15px;
             min-width: 120px;
+        }
+
+        /* ==========================
+           SERIES SEASONS
+        ========================== */
+        .seasons-container {
+            margin-top: 30px;
+            grid-column: 1 / -1;
+        }
+
+        .seasons-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .seasons-title {
+            font-size: 24px;
+            color: var(--primary);
+            font-family: 'Unbounded', sans-serif;
+        }
+
+        .season-selector {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .season-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 30px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .season-btn.active {
+            background: var(--primary-alt);
+            box-shadow: var(--shadow);
+        }
+
+        .season-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .episode-card {
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            padding: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+            border-left: 3px solid var(--primary-alt);
+        }
+
+        .episode-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .episode-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .episode-number {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .episode-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .episode-synopsis {
+            color: #aaa;
+            font-size: 14px;
         }
 
         /* ==========================
@@ -1090,11 +1245,11 @@
            RESPONSIVE
         ========================== */
         @media (max-width: 1200px) {
-            .film-detail-body {
+            .content-detail-body {
                 grid-template-columns: 1fr;
             }
 
-            .film-detail-sidebar {
+            .content-detail-sidebar {
                 grid-row: 1;
             }
         }
@@ -1139,7 +1294,7 @@
                 padding: 30px 20px;
             }
 
-            .film-grid {
+            .content-grid {
                 grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
                 gap: 15px;
             }
@@ -1162,19 +1317,19 @@
                 font-size: 24px;
             }
 
-            .film-detail-body {
+            .content-detail-body {
                 padding: 20px;
             }
 
-            .film-detail-header {
+            .content-detail-header {
                 height: 350px;
             }
 
-            .film-detail-overlay {
+            .content-detail-overlay {
                 padding: 20px;
             }
 
-            .film-detail-title {
+            .content-detail-title {
                 font-size: 32px;
             }
 
@@ -1183,30 +1338,6 @@
             }
         }
     </style>
-    
-    <!-- Firebase Integration -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getDatabase, ref, push, set, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-        import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCri7p3YoJYAKYKguJgkio3NQawzK_pa4E",
-            authDomain: "schaccine.firebaseapp.com",
-            databaseURL: "https://schaccine-default-rtdb.firebaseio.com",
-            projectId: "schaccine",
-            storageBucket: "schaccine.appspot.com",
-            messagingSenderId: "962117609154",
-            appId: "1:962117609154:web:7a0cfef85d096654f47d5b",
-            measurementId: "G-RR6S5ZS8BJ"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const db = getDatabase(app);
-        const storage = getStorage(app);
-    </script>
 </head>
 <body>
     <!-- ============ HEADER ============ -->
@@ -1263,19 +1394,33 @@
             <div class="loader-text">Autenticando...</div>
         </div>
 
+        <!-- ============ SECTION TOGGLE ============ -->
+        <div class="section-toggle hidden" id="sectionToggle">
+            <button class="section-toggle-btn active" data-section="films">Filmes</button>
+            <button class="section-toggle-btn" data-section="series">Séries</button>
+        </div>
+
         <!-- ============ UPLOAD SECTION (ADMIN) ============ -->
         <section class="upload-section hidden" id="uploadSection">
-            <h2 class="section-title"><i class="fas fa-cloud-upload-alt"></i> Upload de Filme</h2>
+            <h2 class="section-title"><i class="fas fa-cloud-upload-alt"></i> Upload de Conteúdo</h2>
 
-            <form class="upload-form" onsubmit="event.preventDefault(); uploadFilm();">
+            <form class="upload-form" onsubmit="event.preventDefault(); uploadContent();">
                 <div class="upload-form-group">
-                    <label class="upload-label" for="filmTitle">Título do Filme</label>
-                    <input type="text" id="filmTitle" class="upload-input" required />
+                    <label class="upload-label" for="contentTitle">Título</label>
+                    <input type="text" id="contentTitle" class="upload-input" required />
                 </div>
 
                 <div class="upload-form-group">
-                    <label class="upload-label" for="filmCategory">Categoria</label>
-                    <select id="filmCategory" class="upload-input" required>
+                    <label class="upload-label" for="contentType">Tipo</label>
+                    <select id="contentType" class="upload-input" required>
+                        <option value="movie">Filme</option>
+                        <option value="series">Série</option>
+                    </select>
+                </div>
+
+                <div class="upload-form-group">
+                    <label class="upload-label" for="contentCategory">Categoria</label>
+                    <select id="contentCategory" class="upload-input" required>
                         <option value="Geral">Geral</option>
                         <option value="Terror">Terror</option>
                         <option value="Suspense">Suspense</option>
@@ -1287,21 +1432,29 @@
                 </div>
 
                 <div class="upload-form-group">
-                    <label class="upload-label" for="filmURL">URL do Vídeo</label>
-                    <input type="text" id="filmURL" class="upload-input" placeholder="YouTube, Vimeo, Drive..." required />
+                    <label class="upload-label" for="contentURL">URL do Vídeo</label>
+                    <input type="text" id="contentURL" class="upload-input" placeholder="YouTube, Vimeo, Drive..." required />
                 </div>
 
                 <div class="upload-form-group">
-                    <label class="upload-label" for="filmThumb">URL da Imagem</label>
-                    <input type="text" id="filmThumb" class="upload-input" required />
+                    <label class="upload-label" for="contentThumb">URL da Imagem</label>
+                    <input type="text" id="contentThumb" class="upload-input" required />
                 </div>
 
                 <div class="upload-form-group full-width">
-                    <label class="upload-label" for="filmSynopsis">Sinopse</label>
-                    <textarea id="filmSynopsis" class="upload-input upload-textarea" required></textarea>
+                    <label class="upload-label" for="contentSynopsis">Sinopse</label>
+                    <textarea id="contentSynopsis" class="upload-input upload-textarea" required></textarea>
                 </div>
 
-                <button type="submit" class="upload-submit">Enviar Filme</button>
+                <div class="upload-form-group full-width hidden" id="seriesSeasonsGroup">
+                    <label class="upload-label">Temporadas e Episódios</label>
+                    <div id="seriesSeasonsContainer"></div>
+                    <button type="button" class="nav-btn" onclick="addSeason()">
+                        <i class="fas fa-plus"></i> Adicionar Temporada
+                    </button>
+                </div>
+
+                <button type="submit" class="upload-submit">Enviar Conteúdo</button>
             </form>
         </section>
 
@@ -1317,7 +1470,22 @@
             </div>
 
             <h2 class="section-title"><i class="fas fa-film"></i> Filmes Disponíveis</h2>
-            <div id="filmList" class="film-grid"></div>
+            <div id="filmList" class="content-grid"></div>
+        </section>
+
+        <!-- ============ SERIES SECTION ============ -->
+        <section class="hidden" id="seriesSection">
+            <div class="controls-row">
+                <input type="text" id="seriesSearchBar" class="search-input" placeholder="Pesquisar séries... (Pressione / para focar)" />
+                <select id="seriesSortSelect" class="select-input" onchange="loadSeries()">
+                    <option value="latest">Mais recentes</option>
+                    <option value="title">A–Z</option>
+                    <option value="rating">Melhor avaliados</option>
+                </select>
+            </div>
+
+            <h2 class="section-title"><i class="fas fa-tv"></i> Séries Disponíveis</h2>
+            <div id="seriesList" class="content-grid"></div>
         </section>
 
         <!-- ============ PROFILE SECTION ============ -->
@@ -1356,32 +1524,41 @@
                 </div>
             </div>
 
-            <h3 class="profile-favorites-title"><i class="fas fa-heart"></i> Filmes Favoritos</h3>
-            <div id="favouriteList" class="film-grid"></div>
+            <h3 class="profile-favorites-title"><i class="fas fa-heart"></i> Conteúdos Favoritos</h3>
+            <div id="favouriteList" class="content-grid"></div>
         </section>
     </div>
 
-    <!-- ============ FILM DETAIL MODAL ============ -->
-    <div class="film-detail-container" id="filmDetailModal">
-        <div class="film-detail-content">
-            <div class="film-detail-header">
-                <img id="filmDetailBackdrop" class="film-detail-backdrop" src="" alt="" />
-                <div class="film-detail-overlay">
-                    <h1 class="film-detail-title" id="filmDetailTitle"></h1>
-                    <div class="film-detail-meta">
-                        <span id="filmDetailCategory" class="pill"></span>
-                        <div class="film-detail-rating" id="filmDetailRating"></div>
+    <!-- ============ CONTENT DETAIL MODAL ============ -->
+    <div class="content-detail-container" id="contentDetailModal">
+        <div class="content-detail-content">
+            <div class="content-detail-header">
+                <img id="contentDetailBackdrop" class="content-detail-backdrop" src="" alt="" />
+                <div class="content-detail-overlay">
+                    <h1 class="content-detail-title" id="contentDetailTitle"></h1>
+                    <div class="content-detail-meta">
+                        <span id="contentDetailCategory" class="pill"></span>
+                        <div class="content-detail-rating" id="contentDetailRating"></div>
                     </div>
                 </div>
-                <button class="film-detail-close" onclick="closeFilmDetail()">
+                <button class="content-detail-close" onclick="closeContentDetail()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <div class="film-detail-body">
+            <div class="content-detail-body">
                 <div>
-                    <div class="film-detail-player">
-                        <iframe id="filmDetailPlayer" allowfullscreen></iframe>
+                    <div class="content-detail-player">
+                        <iframe id="contentDetailPlayer" allowfullscreen></iframe>
+                    </div>
+
+                    <!-- Seasons container for series -->
+                    <div class="seasons-container hidden" id="seriesSeasonsDetail">
+                        <div class="seasons-header">
+                            <h3 class="seasons-title"><i class="fas fa-layer-group"></i> Temporadas</h3>
+                        </div>
+                        <div class="season-selector" id="seasonSelector"></div>
+                        <div class="episodes-grid" id="episodesContainer"></div>
                     </div>
 
                     <div class="comments-section">
@@ -1396,18 +1573,18 @@
                     </div>
                 </div>
 
-                <div class="film-detail-sidebar">
+                <div class="content-detail-sidebar">
                     <h3 class="section-title"><i class="fas fa-info-circle"></i> Sinopse</h3>
-                    <p class="film-detail-synopsis" id="filmDetailSynopsis"></p>
+                    <p class="content-detail-synopsis" id="contentDetailSynopsis"></p>
 
-                    <div class="film-detail-info-item">
-                        <span class="film-detail-info-label">Adicionado em:</span>
-                        <span id="filmDetailDate"></span>
+                    <div class="content-detail-info-item">
+                        <span class="content-detail-info-label">Adicionado em:</span>
+                        <span id="contentDetailDate"></span>
                     </div>
 
-                    <div class="film-detail-info-item">
-                        <span class="film-detail-info-label">Avaliação:</span>
-                        <div class="star-rating" id="filmRatingStars">
+                    <div class="content-detail-info-item">
+                        <span class="content-detail-info-label">Avaliação:</span>
+                        <div class="star-rating" id="contentRatingStars">
                             <i class="fas fa-star" data-rating="1"></i>
                             <i class="fas fa-star" data-rating="2"></i>
                             <i class="fas fa-star" data-rating="3"></i>
@@ -1432,12 +1609,15 @@
         const STORAGE_KEYS = {
             currentUser: "schaccine_user",
             films: "schaccine_films",
+            series: "schaccine_series",
             ratings: "schaccine_ratings"
         };
 
         // Variáveis globais
-        let currentFilmIndex = null;
-        let currentFilmId = null;
+        let currentContentIndex = null;
+        let currentContentId = null;
+        let currentContentType = null; // 'movie' or 'series'
+        let currentSeasonIndex = 0;
 
         /* -------------------------------------------------------------
            USUÁRIOS PRÉ-CADASTRADOS
@@ -1528,10 +1708,10 @@
                               url.match(/id=([^&]+)/)?.[1];
                 return fileId ?
                   `https://drive.google.com/file/d/${fileId}/preview` : url;
-                              }
+            }
 
-                              return url; // Retorna original se não for nenhum dos casos acima
-                          };
+            return url; // Retorna original se não for nenhum dos casos acima
+        };
 
         /* -------------------------------------------------------------
            GERENCIAMENTO DE ESTADO
@@ -1556,6 +1736,7 @@
                 
                 // Simular carregamento
                 setTimeout(() => {
+                    $("#sectionToggle").classList.remove("hidden");
                     $("#filmsSection").classList.remove("hidden");
                     $("#profileBtn").classList.remove("hidden");
                     $("#userAvatarBtn").classList.remove("hidden");
@@ -1658,10 +1839,12 @@
             localStorage.removeItem(STORAGE_KEYS.currentUser);
             $("#authSection").classList.remove("hidden");
             $("#filmsSection").classList.add("hidden");
+            $("#seriesSection").classList.add("hidden");
             $("#profileSection").classList.add("hidden");
             $("#profileBtn").classList.add("hidden");
             $("#userAvatarBtn").classList.add("hidden");
             $("#uploadSection").classList.add("hidden");
+            $("#sectionToggle").classList.add("hidden");
 
             // Resetar campos
             $("#authUser").value = "";
@@ -1670,7 +1853,7 @@
         };
 
         /* -------------------------------------------------------------
-           GERENCIAMENTO DE FILMES
+           GERENCIAMENTO DE CONTEÚDO
         ------------------------------------------------------------- */
         // Carregar filmes
         const loadFilms = () => {
@@ -1693,6 +1876,27 @@
             renderFilms(films);
         };
 
+        // Carregar séries
+        const loadSeries = () => {
+            let series = getStorageData(STORAGE_KEYS.series) || [];
+            const sortBy = $("#seriesSortSelect").value;
+
+            // Ordenar séries
+            switch (sortBy) {
+                case "title":
+                    series.sort((a, b) => a.title.localeCompare(b.title));
+                    break;
+                case "rating":
+                    series.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                    break;
+                case "latest":
+                default:
+                    series.sort((a, b) => b.timestamp - a.timestamp);
+            }
+
+            renderSeries(series);
+        };
+
         // Renderizar filmes
         const renderFilms = (films) => {
             const filmGrid = $("#filmList");
@@ -1705,100 +1909,279 @@
 
             films.forEach((film, index) => {
                 const filmCard = document.createElement("div");
-                filmCard.className = "film-card";
+                filmCard.className = "content-card";
                 filmCard.dataset.index = index;
 
                 const rating = film.rating ? film.rating.toFixed(1) : "N/A";
 
                 filmCard.innerHTML = `
-                    <div class="film-thumb-container">
-                        <img src="${film.thumb}" class="film-thumb" alt="${film.title}" />
-                        <div class="film-overlay">
-                            <div class="film-actions">
-                                <button class="action-btn" onclick="event.stopPropagation(); showFilmDetail(${index})">
+                    <div class="content-thumb-container">
+                        <img src="${film.thumb}" class="content-thumb" alt="${film.title}" />
+                        <div class="content-overlay">
+                            <div class="content-actions">
+                                <button class="action-btn" onclick="event.stopPropagation(); showContentDetail(${index}, 'movie')">
                                     <i class="fas fa-play"></i>
                                 </button>
-                                <button class="action-btn" onclick="event.stopPropagation(); addToFavorites(${index})">
+                                <button class="action-btn" onclick="event.stopPropagation(); addToFavorites(${index}, 'movie')">
                                     <i class="far fa-heart"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="film-info">
-                        <h3 class="film-title">${film.title}</h3>
-                        <div class="film-meta">
-                            <span class="film-category">${film.category}</span>
+                    <div class="content-info">
+                        <h3 class="content-title">${film.title}</h3>
+                        <div class="content-meta">
+                            <span class="content-category">${film.category}</span>
                             <span>⭐ ${rating}</span>
                         </div>
                     </div>
                 `;
 
-                filmCard.addEventListener("click", () => showFilmDetail(index));
+                filmCard.addEventListener("click", () => showContentDetail(index, 'movie'));
                 filmGrid.appendChild(filmCard);
             });
         };
 
-        // Upload de filme
-        const uploadFilm = () => {
-            const title = $("#filmTitle").value.trim();
-            const category = $("#filmCategory").value;
-            const url = $("#filmURL").value.trim();
-            const thumb = $("#filmThumb").value.trim();
-            const synopsis = $("#filmSynopsis").value.trim();
+        // Renderizar séries
+        const renderSeries = (series) => {
+            const seriesGrid = $("#seriesList");
+            seriesGrid.innerHTML = "";
 
-            if (!title || !category || !url || !thumb || !synopsis) {
+            if (series.length === 0) {
+                seriesGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;">Nenhuma série encontrada</p>`;
+                return;
+            }
+
+            series.forEach((series, index) => {
+                const seriesCard = document.createElement("div");
+                seriesCard.className = "content-card";
+                seriesCard.dataset.index = index;
+
+                const rating = series.rating ? series.rating.toFixed(1) : "N/A";
+                const episodeCount = series.seasons.reduce((total, season) => total + season.episodes.length, 0);
+
+                seriesCard.innerHTML = `
+                    <div class="content-thumb-container">
+                        <img src="${series.thumb}" class="content-thumb" alt="${series.title}" />
+                        <span class="series-tag">${series.seasons.length} Temporadas</span>
+                        <div class="content-overlay">
+                            <div class="content-actions">
+                                <button class="action-btn" onclick="event.stopPropagation(); showContentDetail(${index}, 'series')">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="action-btn" onclick="event.stopPropagation(); addToFavorites(${index}, 'series')">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-info">
+                        <h3 class="content-title">${series.title}</h3>
+                        <div class="content-meta">
+                            <span class="content-category">${series.category}</span>
+                            <span>⭐ ${rating} | ${episodeCount} eps</span>
+                        </div>
+                    </div>
+                `;
+
+                seriesCard.addEventListener("click", () => showContentDetail(index, 'series'));
+                seriesGrid.appendChild(seriesCard);
+            });
+        };
+
+        // Upload de conteúdo
+        const uploadContent = () => {
+            const title = $("#contentTitle").value.trim();
+            const type = $("#contentType").value;
+            const category = $("#contentCategory").value;
+            const url = $("#contentURL").value.trim();
+            const thumb = $("#contentThumb").value.trim();
+            const synopsis = $("#contentSynopsis").value.trim();
+
+            if (!title || !type || !category || !url || !thumb || !synopsis) {
                 toast("Preencha todos os campos!", "error");
                 return;
             }
 
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            const newFilm = {
-                id: Date.now().toString(),
-                title,
-                category,
-                url,
-                thumb,
-                synopsis,
-                timestamp: Date.now(),
-                rating: 0,
-                ratings: []
-            };
+            if (type === "series") {
+                const seasons = [];
+                const seasonElements = $$("#seriesSeasonsContainer .season-item");
+                
+                if (seasonElements.length === 0) {
+                    toast("Adicione pelo menos uma temporada!", "error");
+                    return;
+                }
+                
+                seasonElements.forEach(seasonEl => {
+                    const seasonNumber = seasonEl.querySelector(".season-number-input").value;
+                    const episodes = [];
+                    
+                    const episodeElements = seasonEl.querySelectorAll(".episode-item");
+                    episodeElements.forEach(episodeEl => {
+                        const episodeTitle = episodeEl.querySelector(".episode-title-input").value;
+                        const episodeSynopsis = episodeEl.querySelector(".episode-synopsis-input").value;
+                        const episodeUrl = episodeEl.querySelector(".episode-url-input").value;
+                        
+                        if (episodeTitle && episodeUrl) {
+                            episodes.push({
+                                title: episodeTitle,
+                                synopsis: episodeSynopsis,
+                                url: episodeUrl
+                            });
+                        }
+                    });
+                    
+                    if (episodes.length > 0) {
+                        seasons.push({
+                            number: seasonNumber,
+                            episodes: episodes
+                        });
+                    }
+                });
+                
+                if (seasons.length === 0) {
+                    toast("Adicione episódios às temporadas!", "error");
+                    return;
+                }
+                
+                const series = getStorageData(STORAGE_KEYS.series) || [];
+                const newSeries = {
+                    id: Date.now().toString(),
+                    title,
+                    category,
+                    thumb,
+                    synopsis,
+                    seasons,
+                    timestamp: Date.now(),
+                    rating: 0,
+                    ratings: []
+                };
+                
+                series.unshift(newSeries);
+                setStorageData(STORAGE_KEYS.series, series);
+                toast("Série adicionada com sucesso!", "success");
+                loadSeries();
+            } else {
+                const films = getStorageData(STORAGE_KEYS.films) || [];
+                const newFilm = {
+                    id: Date.now().toString(),
+                    title,
+                    category,
+                    url,
+                    thumb,
+                    synopsis,
+                    timestamp: Date.now(),
+                    rating: 0,
+                    ratings: []
+                };
 
-            films.unshift(newFilm);
-            setStorageData(STORAGE_KEYS.films, films);
+                films.unshift(newFilm);
+                setStorageData(STORAGE_KEYS.films, films);
+                toast("Filme adicionado com sucesso!", "success");
+                loadFilms();
+            }
 
             // Limpar formulário
-            $("#filmTitle").value = "";
-            $("#filmURL").value = "";
-            $("#filmThumb").value = "";
-            $("#filmSynopsis").value = "";
+            $("#contentTitle").value = "";
+            $("#contentURL").value = "";
+            $("#contentThumb").value = "";
+            $("#contentSynopsis").value = "";
+            $("#seriesSeasonsContainer").innerHTML = "";
+        };
 
-            toast("Filme adicionado com sucesso!", "success");
-            loadFilms();
+        // Adicionar temporada no formulário
+        const addSeason = () => {
+            const seasonNumber = document.querySelectorAll(".season-item").length + 1;
+            const seasonHTML = `
+                <div class="season-item" style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3 style="color: var(--primary);">Temporada ${seasonNumber}</h3>
+                        <button type="button" class="action-btn" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" class="upload-input season-number-input" value="${seasonNumber}" placeholder="Número da Temporada" required />
+                    </div>
+                    <div class="episodes-container" style="margin-top: 10px;"></div>
+                    <button type="button" class="nav-btn" style="margin-top: 10px;" onclick="addEpisode(this)">
+                        <i class="fas fa-plus"></i> Adicionar Episódio
+                    </button>
+                </div>
+            `;
+            
+            $("#seriesSeasonsContainer").insertAdjacentHTML("beforeend", seasonHTML);
+        };
+
+        // Adicionar episódio no formulário
+        const addEpisode = (button) => {
+            const episodesContainer = button.parentElement.querySelector(".episodes-container");
+            const episodeCount = episodesContainer.querySelectorAll(".episode-item").length + 1;
+            
+            const episodeHTML = `
+                <div class="episode-item" style="margin-bottom: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="color: var(--primary);">Episódio ${episodeCount}</h4>
+                        <button type="button" class="action-btn" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" class="upload-input episode-title-input" placeholder="Título do Episódio" required />
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <textarea class="upload-input episode-synopsis-input" placeholder="Sinopse do Episódio" rows="2"></textarea>
+                    </div>
+                    <div>
+                        <input type="text" class="upload-input episode-url-input" placeholder="URL do Vídeo" required />
+                    </div>
+                </div>
+            `;
+            
+            episodesContainer.insertAdjacentHTML("beforeend", episodeHTML);
         };
 
         /* -------------------------------------------------------------
-           DETALHES DO FILME
+           DETALHES DO CONTEÚDO
         ------------------------------------------------------------- */
-        // Mostrar detalhes do filme
-        const showFilmDetail = (index) => {
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (index < 0 || index >= films.length) return;
-
-            const film = films[index];
-            currentFilmIndex = index;
-            currentFilmId = film.id;
+        // Mostrar detalhes do conteúdo
+        const showContentDetail = (index, type) => {
+            currentContentType = type;
+            currentContentIndex = index;
+            
+            let content;
+            if (type === 'movie') {
+                const films = getStorageData(STORAGE_KEYS.films) || [];
+                if (index < 0 || index >= films.length) return;
+                content = films[index];
+                currentContentId = content.id;
+                $("#seriesSeasonsDetail").classList.add("hidden");
+            } else {
+                const series = getStorageData(STORAGE_KEYS.series) || [];
+                if (index < 0 || index >= series.length) return;
+                content = series[index];
+                currentContentId = content.id;
+                $("#seriesSeasonsDetail").classList.remove("hidden");
+                loadSeasons(content.seasons);
+            }
 
             // Preencher dados do modal
-            $("#filmDetailTitle").textContent = film.title;
-            $("#filmDetailCategory").textContent = film.category;
-            $("#filmDetailBackdrop").src = film.thumb;
-            $("#filmDetailSynopsis").textContent = film.synopsis;
-            $("#filmDetailDate").textContent = formatDate(film.timestamp);
-            $("#filmDetailPlayer").src = processVideoUrl(film.url);
+            $("#contentDetailTitle").textContent = content.title;
+            $("#contentDetailCategory").textContent = content.category;
+            $("#contentDetailBackdrop").src = content.thumb;
+            $("#contentDetailSynopsis").textContent = content.synopsis;
+            $("#contentDetailDate").textContent = formatDate(content.timestamp);
+            
+            // Se for filme, carregar o vídeo diretamente
+            if (type === 'movie') {
+                $("#contentDetailPlayer").src = processVideoUrl(content.url);
+            } else {
+                // Para séries, não carregar vídeo até selecionar episódio
+                $("#contentDetailPlayer").src = "";
+            }
 
             // Atualizar avaliação
-            updateRatingDisplay(film.rating);
+            updateRatingDisplay(content.rating);
 
             // Verificar se é favorito
             checkFavoriteStatus();
@@ -1807,20 +2190,74 @@
             loadComments();
 
             // Mostrar modal
-            $("#filmDetailModal").style.display = "block";
+            $("#contentDetailModal").style.display = "block";
             document.body.style.overflow = "hidden";
         };
 
-        // Fechar detalhes do filme
-        const closeFilmDetail = () => {
-            $("#filmDetailModal").style.display = "none";
+        // Carregar temporadas para séries
+        const loadSeasons = (seasons) => {
+            const seasonSelector = $("#seasonSelector");
+            seasonSelector.innerHTML = "";
+            
+            const episodesContainer = $("#episodesContainer");
+            episodesContainer.innerHTML = "";
+            
+            seasons.forEach((season, index) => {
+                const seasonBtn = document.createElement("button");
+                seasonBtn.className = "season-btn";
+                seasonBtn.textContent = `Temporada ${season.number}`;
+                seasonBtn.dataset.index = index;
+                
+                if (index === currentSeasonIndex) {
+                    seasonBtn.classList.add("active");
+                    renderEpisodes(season.episodes);
+                }
+                
+                seasonBtn.addEventListener("click", () => {
+                    currentSeasonIndex = index;
+                    $$(".season-btn").forEach(btn => btn.classList.remove("active"));
+                    seasonBtn.classList.add("active");
+                    renderEpisodes(season.episodes);
+                });
+                
+                seasonSelector.appendChild(seasonBtn);
+            });
+        };
+
+        // Renderizar episódios
+        const renderEpisodes = (episodes) => {
+            const episodesContainer = $("#episodesContainer");
+            episodesContainer.innerHTML = "";
+            
+            episodes.forEach((episode, index) => {
+                const episodeCard = document.createElement("div");
+                episodeCard.className = "episode-card";
+                episodeCard.innerHTML = `
+                    <div class="episode-header">
+                        <span class="episode-number">Ep. ${index + 1}</span>
+                    </div>
+                    <div class="episode-title">${episode.title}</div>
+                    <div class="episode-synopsis">${episode.synopsis || "Sem sinopse"}</div>
+                `;
+                
+                episodeCard.addEventListener("click", () => {
+                    $("#contentDetailPlayer").src = processVideoUrl(episode.url);
+                });
+                
+                episodesContainer.appendChild(episodeCard);
+            });
+        };
+
+        // Fechar detalhes do conteúdo
+        const closeContentDetail = () => {
+            $("#contentDetailModal").style.display = "none";
             document.body.style.overflow = "auto";
-            $("#filmDetailPlayer").src = "";
+            $("#contentDetailPlayer").src = "";
         };
 
         // Atualizar exibição da avaliação
         const updateRatingDisplay = (rating) => {
-            const ratingContainer = $("#filmDetailRating");
+            const ratingContainer = $("#contentDetailRating");
             ratingContainer.innerHTML = "";
 
             if (!rating || rating === 0) {
@@ -1850,9 +2287,9 @@
         ------------------------------------------------------------- */
         // Configurar estrelas de avaliação
         const setupRatingStars = () => {
-            const stars = $$("#filmRatingStars .fa-star");
+            const stars = $$("#contentRatingStars .fa-star");
             stars.forEach(star => {
-                star.addEventListener("click", () => rateFilm(parseInt(star.dataset.rating)));
+                star.addEventListener("click", () => rateContent(parseInt(star.dataset.rating)));
                 star.addEventListener("mouseover", (e) => highlightStars(e.target.dataset.rating));
                 star.addEventListener("mouseout", resetStarsHighlight);
             });
@@ -1860,7 +2297,7 @@
 
         // Destacar estrelas ao passar o mouse
         const highlightStars = (rating) => {
-            const stars = $$("#filmRatingStars .fa-star");
+            const stars = $$("#contentRatingStars .fa-star");
             stars.forEach((star, index) => {
                 if (index < rating) {
                     star.classList.add("filled");
@@ -1872,13 +2309,20 @@
 
         // Resetar destaque das estrelas
         const resetStarsHighlight = () => {
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
+            let content;
+            if (currentContentType === 'movie') {
+                const films = getStorageData(STORAGE_KEYS.films) || [];
+                content = films[currentContentIndex];
+            } else {
+                const series = getStorageData(STORAGE_KEYS.series) || [];
+                content = series[currentContentIndex];
+            }
+            
+            if (!content) return;
+            
+            const userRating = content.ratings?.find(r => r.user === getStorageData(STORAGE_KEYS.currentUser)?.user);
 
-            const film = films[currentFilmIndex];
-            const userRating = film.ratings?.find(r => r.user === getStorageData(STORAGE_KEYS.currentUser)?.user);
-
-            const stars = $$("#filmRatingStars .fa-star");
+            const stars = $$("#contentRatingStars .fa-star");
             stars.forEach((star, index) => {
                 if (userRating && index < userRating.rating) {
                     star.classList.add("filled");
@@ -1888,37 +2332,45 @@
             });
         };
 
-        // Avaliar filme
-        const rateFilm = (rating) => {
+        // Avaliar conteúdo
+        const rateContent = (rating) => {
             const user = getStorageData(STORAGE_KEYS.currentUser);
             if (!user) {
-                toast("Faça login para avaliar filmes", "error");
+                toast("Faça login para avaliar conteúdos", "error");
                 return;
             }
 
-            let films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
+            let storageKey, contents;
+            if (currentContentType === 'movie') {
+                storageKey = STORAGE_KEYS.films;
+                contents = getStorageData(storageKey) || [];
+            } else {
+                storageKey = STORAGE_KEYS.series;
+                contents = getStorageData(storageKey) || [];
+            }
+            
+            if (currentContentIndex === null || currentContentIndex >= contents.length) return;
 
-            const film = films[currentFilmIndex];
+            const content = contents[currentContentIndex];
 
             // Remover avaliação existente do usuário
-            film.ratings = film.ratings?.filter(r => r.user !== user.user) || [];
+            content.ratings = content.ratings?.filter(r => r.user !== user.user) || [];
 
             // Adicionar nova avaliação
-            film.ratings.push({
+            content.ratings.push({
                 user: user.user,
                 rating,
                 timestamp: Date.now()
             });
 
             // Calcular nova média
-            const total = film.ratings.reduce((sum, r) => sum + r.rating, 0);
-            film.rating = total / film.ratings.length;
+            const total = content.ratings.reduce((sum, r) => sum + r.rating, 0);
+            content.rating = total / content.ratings.length;
 
-            setStorageData(STORAGE_KEYS.films, films);
+            setStorageData(storageKey, contents);
 
             // Atualizar exibição
-            updateRatingDisplay(film.rating);
+            updateRatingDisplay(content.rating);
             toast("Avaliação registrada!", "success");
         };
 
@@ -1927,11 +2379,19 @@
         ------------------------------------------------------------- */
         // Carregar comentários
         const loadComments = () => {
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
+            let storageKey, contents;
+            if (currentContentType === 'movie') {
+                storageKey = STORAGE_KEYS.films;
+                contents = getStorageData(storageKey) || [];
+            } else {
+                storageKey = STORAGE_KEYS.series;
+                contents = getStorageData(storageKey) || [];
+            }
+            
+            if (currentContentIndex === null || currentContentIndex >= contents.length) return;
 
-            const film = films[currentFilmIndex];
-            const comments = film.comments || [];
+            const content = contents[currentContentIndex];
+            const comments = content.comments || [];
             const commentsList = $("#commentsList");
             commentsList.innerHTML = "";
 
@@ -1975,20 +2435,28 @@
                 return;
             }
 
-            let films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
+            let storageKey, contents;
+            if (currentContentType === 'movie') {
+                storageKey = STORAGE_KEYS.films;
+                contents = getStorageData(storageKey) || [];
+            } else {
+                storageKey = STORAGE_KEYS.series;
+                contents = getStorageData(storageKey) || [];
+            }
+            
+            if (currentContentIndex === null || currentContentIndex >= contents.length) return;
 
-            const film = films[currentFilmIndex];
-            film.comments = film.comments || [];
+            const content = contents[currentContentIndex];
+            content.comments = content.comments || [];
 
-            film.comments.push({
+            content.comments.push({
                 id: Date.now().toString(),
                 user: user.user,
                 text,
                 timestamp: Date.now()
             });
 
-            setStorageData(STORAGE_KEYS.films, films);
+            setStorageData(storageKey, contents);
 
             // Limpar e recarregar
             $("#commentInput").value = "";
@@ -2000,13 +2468,21 @@
         const deleteComment = (commentId) => {
             if (!confirm("Tem certeza que deseja excluir este comentário?")) return;
 
-            let films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
+            let storageKey, contents;
+            if (currentContentType === 'movie') {
+                storageKey = STORAGE_KEYS.films;
+                contents = getStorageData(storageKey) || [];
+            } else {
+                storageKey = STORAGE_KEYS.series;
+                contents = getStorageData(storageKey) || [];
+            }
+            
+            if (currentContentIndex === null || currentContentIndex >= contents.length) return;
 
-            const film = films[currentFilmIndex];
-            film.comments = film.comments.filter(c => c.id !== commentId);
+            const content = contents[currentContentIndex];
+            content.comments = content.comments.filter(c => c.id !== commentId);
 
-            setStorageData(STORAGE_KEYS.films, films);
+            setStorageData(storageKey, contents);
             loadComments();
             toast("Comentário excluído", "success");
         };
@@ -2019,13 +2495,19 @@
             const user = getStorageData(STORAGE_KEYS.currentUser);
             if (!user) return;
 
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
+            let contents;
+            if (currentContentType === 'movie') {
+                contents = getStorageData(STORAGE_KEYS.films) || [];
+            } else {
+                contents = getStorageData(STORAGE_KEYS.series) || [];
+            }
+            
+            if (currentContentIndex === null || currentContentIndex >= contents.length) return;
 
-            const film = films[currentFilmIndex];
+            const content = contents[currentContentIndex];
             const favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
 
-            const isFavorite = favorites.some(favId => favId === film.id);
+            const isFavorite = favorites.some(fav => fav.id === content.id && fav.type === currentContentType);
             const btn = $("#favoriteBtn");
 
             if (isFavorite) {
@@ -2045,15 +2527,29 @@
                 return;
             }
 
-            const films = getStorageData(STORAGE_KEYS.films) || [];
-            if (currentFilmIndex === null || currentFilmIndex >= films.length) return;
+            let contents;
+            if (currentContentType === 'movie') {
+                contents = getStorageData(STORAGE_KEYS.films) || [];
+            } else {
+                contents = getStorageData(STORAGE_KEYS.series) || [];
+            }
+            
+            if (currentContentIndex === null || currentContentIndex >= contents.length) return;
 
-            const film = films[currentFilmIndex];
+            const content = contents[currentContentIndex];
             let favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
 
-            const index = favorites.indexOf(film.id);
+            const index = favorites.findIndex(fav => 
+                fav.id === content.id && fav.type === currentContentType
+            );
+            
             if (index === -1) {
-                favorites.push(film.id);
+                favorites.push({
+                    id: content.id,
+                    type: currentContentType,
+                    title: content.title,
+                    thumb: content.thumb
+                });
                 toast("Adicionado aos favoritos", "success");
             } else {
                 favorites.splice(index, 1);
@@ -2072,70 +2568,98 @@
 
             const favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
             const films = getStorageData(STORAGE_KEYS.films) || [];
+            const series = getStorageData(STORAGE_KEYS.series) || [];
 
-            const favoriteFilms = films.filter(film => favorites.includes(film.id));
-            renderFavorites(favoriteFilms);
+            const favoriteItems = favorites.map(fav => {
+                if (fav.type === 'movie') {
+                    const film = films.find(f => f.id === fav.id);
+                    if (film) return { ...film, type: 'movie' };
+                } else {
+                    const serie = series.find(s => s.id === fav.id);
+                    if (serie) return { ...serie, type: 'series' };
+                }
+                return null;
+            }).filter(item => item !== null);
+
+            renderFavorites(favoriteItems);
         };
 
         // Renderizar favoritos
-        const renderFavorites = (films) => {
+        const renderFavorites = (items) => {
             const container = $("#favouriteList");
             container.innerHTML = "";
 
-            if (films.length === 0) {
-                container.innerHTML = `<p style="grid-column:1/-1;text-align:center;">Nenhum filme favorito</p>`;
+            if (items.length === 0) {
+                container.innerHTML = `<p style="grid-column:1/-1;text-align:center;">Nenhum favorito adicionado</p>`;
                 return;
             }
 
-            films.forEach((film, index) => {
-                const filmCard = document.createElement("div");
-                filmCard.className = "film-card";
+            items.forEach((item, index) => {
+                const card = document.createElement("div");
+                card.className = "content-card";
 
-                filmCard.innerHTML = `
-                    <div class="film-thumb-container">
-                        <img src="${film.thumb}" class="film-thumb" alt="${film.title}" />
-                        <div class="film-overlay">
-                            <div class="film-actions">
-                                <button class="action-btn" onclick="event.stopPropagation(); showFilmDetail(${films.indexOf(film)})">
+                const rating = item.rating ? item.rating.toFixed(1) : "N/A";
+                const typeIcon = item.type === 'movie' ? 'fa-film' : 'fa-tv';
+                const episodeCount = item.type === 'series' ? 
+                    `${item.seasons.reduce((total, season) => total + season.episodes.length, 0)} eps` : '';
+
+                card.innerHTML = `
+                    <div class="content-thumb-container">
+                        <img src="${item.thumb}" class="content-thumb" alt="${item.title}" />
+                        ${item.type === 'series' ? `<span class="series-tag">${item.seasons.length} Temporadas</span>` : ''}
+                        <div class="content-overlay">
+                            <div class="content-actions">
+                                <button class="action-btn" onclick="event.stopPropagation(); showContentDetail(${index}, '${item.type}')">
                                     <i class="fas fa-play"></i>
                                 </button>
-                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavoriteFromProfile('${film.id}')">
+                                <button class="action-btn" onclick="event.stopPropagation(); toggleFavoriteFromProfile('${item.id}', '${item.type}')">
                                     <i class="fas fa-heart"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="film-info">
-                        <h3 class="film-title">${film.title}</h3>
-                        <div class="film-meta">
-                            <span class="film-category">${film.category}</span>
-                            <span>⭐ ${film.rating ? film.rating.toFixed(1) : "N/A"}</span>
+                    <div class="content-info">
+                        <h3 class="content-title">${item.title}</h3>
+                        <div class="content-meta">
+                            <span class="content-category"><i class="fas ${typeIcon}"></i> ${item.category}</span>
+                            <span>⭐ ${rating} ${episodeCount}</span>
                         </div>
                     </div>
                 `;
 
-                filmCard.addEventListener("click", () => {
-                    const allFilms = getStorageData(STORAGE_KEYS.films) || [];
-                    const mainIndex = allFilms.findIndex(f => f.id === film.id);
-                    if (mainIndex !== -1) showFilmDetail(mainIndex);
+                card.addEventListener("click", () => {
+                    let allItems;
+                    if (item.type === 'movie') {
+                        allItems = getStorageData(STORAGE_KEYS.films) || [];
+                    } else {
+                        allItems = getStorageData(STORAGE_KEYS.series) || [];
+                    }
+                    
+                    const mainIndex = allItems.findIndex(f => f.id === item.id);
+                    if (mainIndex !== -1) showContentDetail(mainIndex, item.type);
                 });
 
-                container.appendChild(filmCard);
+                container.appendChild(card);
             });
         };
 
         // Alternar favorito do perfil
-        const toggleFavoriteFromProfile = (filmId) => {
+        const toggleFavoriteFromProfile = (contentId, contentType) => {
             event.stopPropagation();
 
             const user = getStorageData(STORAGE_KEYS.currentUser);
             if (!user) return;
 
             let favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
-            const index = favorites.indexOf(filmId);
+            const index = favorites.findIndex(fav => 
+                fav.id === contentId && fav.type === contentType
+            );
 
             if (index === -1) {
-                favorites.push(filmId);
+                favorites.push({
+                    id: contentId,
+                    type: contentType
+                });
                 toast("Adicionado aos favoritos", "success");
             } else {
                 favorites.splice(index, 1);
@@ -2154,25 +2678,34 @@
 
             const favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
             const films = getStorageData(STORAGE_KEYS.films) || [];
+            const series = getStorageData(STORAGE_KEYS.series) || [];
 
-            const favoriteFilms = films.filter(film => favorites.includes(film.id));
-
-            if (favoriteFilms.length === 0) {
+            if (favorites.length === 0) {
                 toast("Nenhum favorito para exportar", "error");
                 return;
             }
 
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Título,Categoria,Avaliação,URL\n";
+            csvContent += "Título,Tipo,Categoria,Avaliação,URL\n";
 
-            favoriteFilms.forEach(film => {
-                const row = [
-                    `"${film.title}"`,
-                    `"${film.category}"`,
-                    film.rating ? film.rating.toFixed(1) : "N/A",
-                    `"${film.url}"`
-                ].join(",");
-                csvContent += row + "\n";
+            favorites.forEach(fav => {
+                let content;
+                if (fav.type === 'movie') {
+                    content = films.find(f => f.id === fav.id);
+                } else {
+                    content = series.find(s => s.id === fav.id);
+                }
+                
+                if (content) {
+                    const row = [
+                        `"${content.title}"`,
+                        `"${fav.type === 'movie' ? 'Filme' : 'Série'}"`,
+                        `"${content.category}"`,
+                        content.rating ? content.rating.toFixed(1) : "N/A",
+                        `"${content.url || 'Vários episódios'}"`
+                    ].join(",");
+                    csvContent += row + "\n";
+                }
             });
 
             const encodedUri = encodeURI(csvContent);
@@ -2192,6 +2725,7 @@
         // Mostrar perfil
         const showProfile = () => {
             $("#filmsSection").classList.add("hidden");
+            $("#seriesSection").classList.add("hidden");
             $("#profileSection").classList.remove("hidden");
 
             const user = getStorageData(STORAGE_KEYS.currentUser);
@@ -2209,12 +2743,18 @@
 
             const favorites = getStorageData(`${STORAGE_KEYS.currentUser}_favorites`) || [];
             const films = getStorageData(STORAGE_KEYS.films) || [];
+            const series = getStorageData(STORAGE_KEYS.series) || [];
 
             // Contar comentários do usuário
             let commentsCount = 0;
             films.forEach(film => {
                 if (film.comments) {
                     commentsCount += film.comments.filter(c => c.user === user.user).length;
+                }
+            });
+            series.forEach(serie => {
+                if (serie.comments) {
+                    commentsCount += serie.comments.filter(c => c.user === user.user).length;
                 }
             });
 
@@ -2291,7 +2831,7 @@
                 }
             });
 
-            // Configurar pesquisa
+            // Configurar pesquisa de filmes
             $("#searchBar").addEventListener("input", (e) => {
                 const term = e.target.value.toLowerCase();
                 const films = getStorageData(STORAGE_KEYS.films) || [];
@@ -2310,6 +2850,25 @@
                 renderFilms(filtered);
             });
 
+            // Configurar pesquisa de séries
+            $("#seriesSearchBar").addEventListener("input", (e) => {
+                const term = e.target.value.toLowerCase();
+                const series = getStorageData(STORAGE_KEYS.series) || [];
+
+                if (term === "") {
+                    loadSeries();
+                    return;
+                }
+
+                const filtered = series.filter(serie => 
+                    serie.title.toLowerCase().includes(term) || 
+                    serie.category.toLowerCase().includes(term) ||
+                    serie.synopsis.toLowerCase().includes(term)
+                );
+
+                renderSeries(filtered);
+            });
+
             // Configurar estrelas de avaliação
             setupRatingStars();
 
@@ -2319,12 +2878,44 @@
                 $("#profilePic").src = user.avatar;
                 $("#userAvatarBtn").src = user.avatar;
             }
+
+            // Configurar toggle de seções
+            $$(".section-toggle-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const section = btn.dataset.section;
+                    
+                    // Atualizar botões ativos
+                    $$(".section-toggle-btn").forEach(b => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    
+                    // Mostrar seção correspondente
+                    if (section === "films") {
+                        $("#filmsSection").classList.remove("hidden");
+                        $("#seriesSection").classList.add("hidden");
+                        loadFilms();
+                    } else {
+                        $("#filmsSection").classList.add("hidden");
+                        $("#seriesSection").classList.remove("hidden");
+                        loadSeries();
+                    }
+                });
+            });
+
+            // Mostrar/ocultar campos para séries
+            $("#contentType").addEventListener("change", () => {
+                if ($("#contentType").value === "series") {
+                    $("#seriesSeasonsGroup").classList.remove("hidden");
+                } else {
+                    $("#seriesSeasonsGroup").classList.add("hidden");
+                }
+            });
         });
 
         /* -------------------------------------------------------------
-           FILMES MANUAIS (SEM FIREBASE)
+           CONTEÚDO MANUAL (SEM FIREBASE)
         ------------------------------------------------------------- */
-        function adicionarFilmesManuais() {
+        function adicionarConteudoManual() {
+            // Filmes
             const filmesManuais = [
                 {
                     title: "AFTER",
@@ -2361,13 +2952,12 @@
                     thumb: "https://i.ytimg.com/vi/ODcko7WzHA8/hq720.jpg",
                     synopsis: "Hayley é uma adolescente inteligente e charmosa. Jeff é um fotógrafo de moda bonito e elegante. Um bate-papo online, um encontro em uma cafeteria, um ensaio fotográfico improvisado na casa de Jeff. Jeff acha que é sua noite de sorte. Ele terá uma surpresa."
                 },
-               {
+                {
                     title: "A caçada",
                     category: "Suspense",
                     url: "https://youtu.be/MktUqREeobs",
                     thumb: "https://i.ytimg.com/vi/MktUqREeobs/maxresdefault.jpg",
                     synopsis: "Um homem e sua família vivem na selva como caçadores de peles, mas sua tranquilidade é ameaçada quando acreditam que estão sendo perseguidos pelo retorno de um lobo rebelde, e ele os deixa para trás para localizá-lo."
-
                 },
                 {
                     title: "Ainda Dizemos Amém",
@@ -2375,7 +2965,6 @@
                     url: "https://youtu.be/FqHVYS_y7W0",
                     thumb: "https://i.ytimg.com/vi/FqHVYS_y7W0/maxresdefault.jpg",
                     synopsis: "Maggie, filha do fanático religioso Harold, tenta escapar do pacto de suicídio delirante de seu pai depois que três estranhos desmaiaram perto do remoto complexo rural de sua família."
-
                 },
                 {
                     title: "Feriado Sangrento",
@@ -2383,7 +2972,6 @@
                     url: "https://www.youtube.com/watch?v=i9XGVbaUSaA",
                     thumb: "https://i.ytimg.com/vi/i9XGVbaUSaA/hqdefault.jpg",
                     synopsis: "Um maníaco empunhando um machado aterroriza os moradores de Plymouth, Massachusetts, depois que um motim durante a Black Friday termina em tragédia"
-
                 },
                 {
                     title: "Cidade de Deus",
@@ -2402,8 +2990,75 @@
             ];
 
             localStorage.setItem("schaccine_films", JSON.stringify(filmesManuais));
+            
+            // Séries
+            const seriesManuais = [
+                {
+                    title: "Round 6",
+                    category: "Suspense",
+                    thumb: "https://i.ytimg.com/vi/Aosv3d4SYMw/maxresdefault.jpg",
+                    synopsis: " O Round 6 é uma competição que reúne centenas de participantes, entre eles Seong Gi-hun (interpretado por Lee Jung-jae) para disputar uma série de jogos simples, típicos da infância, com a chance de ganhar um prêmio de 45,6 bilhões de won",
+                    seasons: [
+                        {
+                            number: 1,
+                            episodes: [
+                                {
+                                    title: "Episódio 1: Luz Vermelha, Luz Verde",
+                                    synopsis: "Os participantes chegam ao local desconhecido e jogam o primeiro jogo mortal.",
+                                    url: "https://watch.brplayer.cc/watch?v=RJTIZDW9"
+                                },
+                                {
+                                    title: "Episódio 2: O Segredo do Porão",
+                                    synopsis: "Victoria explora a mansão e descobre uma entrada secreta para o porão, onde encontra algo perturbador.",
+                                    url: "https://www.youtube.com/watch?v=2q0T5NqN6d1"
+                                }
+                            ]
+                        },
+                        {
+                            number: 2,
+                            episodes: [
+                                {
+                                    title: "Episódio 1: O Despertar",
+                                    synopsis: "Barnabas Collins é libertado de seu caixão após quase 200 anos e retorna à mansão Collinwood disfarçado de um primo distante.",
+                                    url: "https://www.youtube.com/watch?v=3r0T5NqN6d2"
+                                },
+                                {
+                                    title: "Episódio 2: Sedução Sombria",
+                                    synopsis: "Barnabas tenta conquistar a jovem Maggie Evans, que se parece com sua amada perdida Josette.",
+                                    url: "https://www.youtube.com/watch?v=4s0T5NqN6d3"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Penny Dreadful",
+                    category: "Horror Psicológico",
+                    thumb: "https://i.ytimg.com/vi/YFXHfEqMcis/maxresdefault.jpg",
+                    synopsis: "Em Londres vitoriana, personagens clássicos como Dr. Frankenstein, Dorian Gray e figuras do universo de Drácula se entrelaçam em uma história sombria de sobrevivência sobrenatural.",
+                    seasons: [
+                        {
+                            number: 1,
+                            episodes: [
+                                {
+                                    title: "Episódio 1: Trabalho Noturno",
+                                    synopsis: "Sir Malcolm Murray e a médium Vanessa Ives recrutam o atirador americano Ethan Chandler para ajudá-los a encontrar a filha desaparecida de Malcolm.",
+                                    url: "https://www.youtube.com/watch?v=YFXHfEqMcis"
+                                },
+                                {
+                                    title: "Episódio 2: Seance",
+                                    synopsis: "Vanessa realiza uma sessão espírita para se comunicar com Mina, mas a sessão toma um rumo perigoso e inesperado.",
+                                    url: "https://www.youtube.com/watch?v=ZFXHfEqMcis"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ];
+
+            localStorage.setItem("schaccine_series", JSON.stringify(seriesManuais));
         }
-        adicionarFilmesManuais();
+        adicionarConteudoManual();
     </script>
 </body>
 </html>
