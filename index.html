@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schaccine - Filmes e Séries Góticas</title>
-    
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Unbounded:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         /* ==========================
            RESET & TOKENS
@@ -35,6 +30,7 @@
             --transition-slow: all 0.5s ease;
             --glow: 0 0 15px rgba(187, 0, 255, 0.6);
             --pulse: 0 0 0 0 rgba(187, 0, 255, 0.7);
+            --gothic-pattern: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237a00cc' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
 
         [data-theme="light"] {
@@ -54,12 +50,25 @@
 
         body {
             background: linear-gradient(135deg, var(--bg-dark), var(--bg-dark-alt));
+            background-image: var(--gothic-pattern);
             color: var(--text-light);
             font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
             transition: var(--transition);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, var(--bg-dark) 90%);
+            z-index: -1;
         }
 
         /* ==========================
@@ -100,6 +109,11 @@
             }
         }
 
+        @keyframes skeleton {
+            0% { background-position: -200px 0; }
+            100% { background-position: calc(200px + 100%) 0; }
+        }
+
         /* ==========================
            HEADER
         ========================== */
@@ -111,6 +125,7 @@
             backdrop-filter: blur(10px);
             transition: var(--transition-slow);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(187, 0, 255, 0.2);
         }
 
         .header-content {
@@ -247,6 +262,7 @@
             animation: fadeIn 0.8s ease-out;
             transform-style: preserve-3d;
             perspective: 1000px;
+            border: 1px solid rgba(187, 0, 255, 0.3);
         }
 
         .auth-container::before {
@@ -553,12 +569,14 @@
             transform-style: preserve-3d;
             perspective: 1000px;
             transform: translateZ(0);
+            border: 1px solid rgba(187, 0, 255, 0.1);
         }
 
         .content-card:hover {
             transform: translateY(-15px) rotateX(5deg) scale(1.03);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
             z-index: 10;
+            border-color: var(--primary);
         }
 
         .content-thumb-container {
@@ -706,6 +724,7 @@
             overflow: hidden;
             box-shadow: var(--shadow);
             animation: fadeIn 0.5s ease;
+            border: 1px solid rgba(187, 0, 255, 0.2);
         }
 
         .content-detail-header {
@@ -1041,6 +1060,7 @@
             margin-bottom: 45px;
             box-shadow: var(--shadow);
             animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(187, 0, 255, 0.1);
         }
 
         .upload-form {
@@ -1116,6 +1136,7 @@
             border-radius: 20px;
             box-shadow: var(--shadow);
             animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(187, 0, 255, 0.1);
         }
 
         .profile-header {
@@ -1266,6 +1287,63 @@
 
         .star:hover {
             transform: scale(1.3);
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(40,40,40,0.8), rgba(60,60,60,0.8), rgba(40,40,40,0.8));
+            background-size: 200px 100%;
+            animation: skeleton 1.5s infinite linear;
+            border-radius: 8px;
+        }
+
+        /* ==========================
+           FOOTER
+        ========================== */
+        footer {
+            padding: 30px 40px;
+            background: rgba(13, 13, 13, 0.95);
+            text-align: center;
+            margin-top: 50px;
+            border-top: 1px solid rgba(187, 0, 255, 0.2);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .footer-logo {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 28px;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            margin-top: 10px;
+        }
+
+        .footer-link {
+            color: #aaa;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(187, 0, 255, 0.5);
+        }
+
+        .copyright {
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
         }
 
         /* ==========================
@@ -1555,6 +1633,20 @@
             <div id="favouriteList" class="content-grid"></div>
         </section>
     </div>
+
+    <!-- ============ FOOTER ============ -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Schaccine</div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Sobre</a>
+                <a href="#" class="footer-link">Contato</a>
+                <a href="#" class="footer-link">Termos de Uso</a>
+                <a href="#" class="footer-link">Política de Privacidade</a>
+            </div>
+            <div class="copyright">© 2023 Schaccine. Todos os direitos reservados.</div>
+        </div>
+    </footer>
 
     <!-- ============ CONTENT DETAIL MODAL ============ -->
     <div class="content-detail-container" id="contentDetailModal">
@@ -3019,7 +3111,7 @@
                     category: "Suspense",
                     url: "https://youtu.be/MktUqREeobs",
                     thumb: "https://i.ytimg.com/vi/MktUqREeobs/maxresdefault.jpg",
-                    synopsis: "Um homem e sua família vivem na selva como caçadores de peles, mas sua tranquilidade é ameaçada quando acreditam que estão sendo perseguidos pelo retorno de um lobo rebelde, e ele os deixa para trás para localizá-lo."
+                    synopsis: "Um maníaco empunhando um machado aterroriza os moradores de Plymouth, Massachusetts, depois que um motim durante a Black Friday termina em tragédia"
                 },
                 {
                     title: "Pecadores",
@@ -3068,7 +3160,7 @@
                     category: "Terror",
                     url: "https://watch.brplayer.cc/watch?v=WI6TG1U2",
                     thumb: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/gU9ubNnaDKYBxs1DCSfiUIqHSMR.jpg",
-                    synopsis: "O palhaço assassino Art está pronto para espalhar o caos sobre os moradores inocentes do Condado de Miles durante uma pacífica véspera de Natal."
+                    synopsis: "O palhaço assassino Art está pronto para espalhar o caos sobre os moradores do Condado de Miles durante uma pacífica véspera de Natal."
                 },
                 {
                     title: "A Substância",
@@ -3144,173 +3236,172 @@
 
             localStorage.setItem("schaccine_films", JSON.stringify(filmesManuais));
             
-            // Séries - CORRIGIDO
-          // Séries - CORRIGIDO
-const seriesManuais = [
-    {
-        title: "Round 6",
-        category: "Suspense",
-        thumb: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/tNUpYHgso5fvCdFb194ph1l4HfR.jpg",
-        synopsis: "O Round 6 é uma competição que reúne centenas de participantes, entre eles Seong Gi-hun (interpretado por Lee Jung-jae) para disputar uma série de jogos simples, típicos da infância, com a chance de ganhar um prêmio de 45,6 bilhões de won",
-        seasons: [
-            {
-                number: 1,
-                episodes: [
-                    {
-                        title: "Episódio 1: Luz Vermelha, Luz Verde",
-                        synopsis: "Os participantes chegam ao local desconhecido e jogam o primeiro jogo mortal.",
-                        url: "https://watch.brplayer.cc/watch?v=RJTIZDW9"
-                    },
-                    {
-                        title: "Episódio 2: Inferno",
-                        synopsis: "Dividido entre continuar ou desistir, o grupo faz uma votação. Mas a realidade que enfrentam no mundo exterior pode ser tão impiedosa quanto o jogo.",
-                        url: "https://watch.brplayer.cc/watch?v=LEF2H1OD"
-                    },
-                    {
-                        title: "Episódio 3: O homem do guarda-chuva",
-                        synopsis: "Um participante idoso com demência se destaca no segundo jogo.",
-                        url: "https://watch.brplayer.cc/watch?v=93OI7BPX"
-                    },
-                    {
-                        title: "Episódio 4: Fiquem juntos.",
-                        synopsis: "Os jogadores formam equipes para o próximo jogo, resultando em traições e alianças",
-                        url: "https://watch.brplayer.cc/watch?v=RSAFMZYP"
-                    },
-                    {
-                        title: "Episódio 5: Um Mundo Justo",
-                        synopsis: "Flashbacks revelam o passado dos participantes enquanto a equipe vencedora desfruta de privilégios",
-                        url: "https://watch.brplayer.cc/watch?v=RH6U8Z9Q"
-                    },
-                    {
-                        title: "Episódio 6: Gganbu",
-                        synopsis: "Os jogadores formam duplas para o quarto jogo. Gi-hun enfrenta um dilema moral, Sang-woo escolhe se proteger e Sae-byeok conta sua história.",
-                        url: "https://watch.brplayer.cc/watch?v=TOIXBD41"
-                    },
-                    {
-                        title: "Episódio 7: Vips",
-                        synopsis: "Os convidados especiais chegam para assistir aos jogos enquanto os participantes enfrentam um novo desafio.",
-                        url: "https://watch.brplayer.cc/watch?v=F2HI60MO"
-                    },
-                    {
-                        title: "Episódio 8: O líder",
-                        synopsis: "Os jogadores restantes competem em uma travessia perigosa em uma ponte de vidro.",
-                        url: "https://watch.brplayer.cc/watch?v=T6DIOP3Z"
-                    },
-                    {
-                        title: "Episódio 9: Um Dia de Sorte",
-                        synopsis: "Os dois finalistas se enfrentam no último jogo enquanto o organizador revela seus motivos.",
-                        url: "https://watch.brplayer.cc/watch?v=OFJV9HEN"
-                    }
-                ]
-            },
-            {
-                number: 2,
-                episodes: [
-                    {
-                        title: "Episódio 1: Pão e Loteria",
-                        synopsis: "Gi-hun sai do aeroporto em busca de vingança. Mais tarde, em seu esconderijo, ele intensifica a busca pelo recrutador.",
-                        url: "https://watch.brplayer.cc/watch?v=HP13UAQ9"
-                    },
-                    {
-                        title: "Episódio 2: Festa de Halloween",
-                        synopsis: "Gi-hun finalmente consegue um convite, e a data mostra que é para o Halloween.",
-                        url: "https://watch.brplayer.cc/watch?v=ICTZRHEJ"
-                    },
-                    {
-                        title: "Episódio 3: 001",
-                        synopsis: "Novos jogadores se reúnem para tentar ganhar 45,6 bilhões de wons. Depois de uma primeira rodada intensa, os destinos dos sobreviventes estão por um fio (e por um voto).",
-                        url: "https://watch.brplayer.cc/watch?v=ICTZRHEJ"
-                    },
-                    {
-                        title: "Episódio 4: Seis pernas",
-                        synopsis: "Os jogadores se preparam para o próximo jogo: um pentatlo em seis pernas, em que cada membro da equipe precisa vencer um minijogo (ou enfrentar a eliminação coletiva).",
-                        url: "https://watch.brplayer.cc/watch?v=EBC28J65"
-                    },
-                    {
-                        title: "Episódio 5: Mais um jogo",
-                        synopsis: "Os jogadores se preparam para o próximo jogo: um pentatlo em seis pernas, em que cada membro da equipe precisa vencer um minijogo (ou enfrentar a eliminação coletiva).",
-                        url: "https://watch.brplayer.cc/watch?v=7H2KUETW"
-                    },
-                    {
-                        title: "Episódio 6: O ﻿ X",
-                        synopsis: "Jun-ho e sua equipe têm a missão de se infiltrar em uma ilha suspeita. Com o prêmio e as tensões aumentando, os jogadores se dividem em duas facções rivais.",
-                        url: "https://watch.brplayer.cc/watch?v=VXEN0MJP"
-                    },
-                    {
-                        title: "Episódio 7: Amigos ou inimigos?",
-                        synopsis: "Os jogadores restantes bolam uma estratégia para sobreviver à noite. Gi-hun propõe um plano arriscado, mas vai precisar de aliados confiáveis para colocá-lo em prática.",
-                        url: "https://watch.brplayer.cc/watch?v=EBC28J65"
-                    }
-                ]
-            },
-            {
-                number: 3,
-                episodes: [
-                    {
-                        title: "Episódio 1: Chaves e facas",
-                        synopsis: "No-eul se infiltra em uma operação perigosa. Um novo jogo é anunciado: esconde-esconde, em que um grupo tem uma chave e o outro, uma faca.",
-                        url: "https://watch.brplayer.cc/watch?v=HP13UAQ9"
-                    },
-                    {
-                        title: "Episódio 2: Noite estrelada",
-                        synopsis: "Recomeçam os jogos e Gi-hun faz questão de confrontar Kang Dae-ho. Enquanto isso, Kim Jun-hee enfrenta uma crise repentina que a leva ao limite.",
-                        url: "https://embedplay.icu/player.php?id=10264a29"
-                    },
-                    {
-                        title: "Episódio 3: Não é culpa sua",
-                        synopsis: "A equipe de Jun-ho chega perto de encontrar a ilha. Jang Geum-ja faz um apelo desesperado a Gi-hun para ajudar Jun-hee. Os VIPs discutem uma proposta cruel.",
-                        url: "https://embedplay.icu/player.php?id=09a152ee"
-                    },
-                    {
-                        title: "Episódio 4: 222",
-                        synopsis: "Mesmo com o apoio de Gi-hun, Jun-hee precisa tomar uma decisão crucial. Antes do último jogo, o líder dá um ultimato a Gi-hun.",
-                        url: "https://embedplay.icu/player.php?id=68c69554"
-                    },
-                    {
-                        title: "Episódio 5: ○△□",
-                        synopsis: "No-eul até tenta negociar, mas seu plano fracassa. Gi-hun enfrenta uma encruzilhada moral que testa seus limites: até onde ele é capaz de ir?",
-                        url: "https://embedplay.icu/player.php?id=6d45d557"
-                    },
-                    {
-                        title: "Episódio 6: Humanos",
-                        synopsis: "Enquanto Jun-ho corre para encontrar a ilha, a tensão aumenta na rodada decisiva. Os últimos jogadores enfrentam uma situação impossível nos minutos finais do jogo.",
-                        url: "https://embedplay.icu/player.php?id=d6584269"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        title: "Passado",
-        category: "Drama",
-        thumb: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/6rdAUVJDApKKihkrqIt6Vtkz938.jpg",
-        synopsis: "Após perder tragicamente a esposa, o psiquiatra infantil Dr. Eli Adler conhece um garoto problemático que parece ter uma conexão assustadora com o passado de Eli.",
-        seasons: [
-            {
-                number: 1,
-                episodes: [
-                    {
-                        title: "Episódio 1: O impostor",
-                        synopsis: "O dr. Eli Adler é um psiquiatra infantil assombrado pela morte de sua esposa Lynn. Um dia, Noah, de oito anos, aparece com um conhecimento inexplicável sobre a vida de Eli.",
-                        url: "https://watch.brplayer.cc/watch?v=URFA89SD"
-                    },
-                    {
-                        title: "Episódio 2: O cientista",
-                        synopsis: "Após a explosão de Noah na escola, Eli se envolve mais no tratamento, descobrindo desenhos e paralelos assustadores com seu próprio trauma",
-                        url: "https://watch.brplayer.cc/watch?v=JPRWF2K3"
-                    },
-                    {
-                        title: "Episódio 3: O mentiroso",
-                        synopsis: "Após a explosão de Noah na escola, Eli se envolve mais no tratamento, descobrindo desenhos e paralelos assustadores com seu próprio trauma",
-                        url: "https://watch.brplayer.cc/watch?v=JPRWF2K3"
-                    }
-                ]
-            }
-        ]
-    }
-];
+            // Séries
+            const seriesManuais = [
+                {
+                    title: "Round 6",
+                    category: "Suspense",
+                    thumb: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/tNUpYHgso5fvCdFb194ph1l4HfR.jpg",
+                    synopsis: "O Round 6 é uma competição que reúne centenas de participantes, entre eles Seong Gi-hun (interpretado por Lee Jung-jae) para disputar uma série de jogos simples, típicos da infância, com a chance de ganhar um prêmio de 45,6 bilhões de won",
+                    seasons: [
+                        {
+                            number: 1,
+                            episodes: [
+                                {
+                                    title: "Episódio 1: Luz Vermelha, Luz Verde",
+                                    synopsis: "Os participantes chegam ao local desconhecido e jogam o primeiro jogo mortal.",
+                                    url: "https://watch.brplayer.cc/watch?v=RJTIZDW9"
+                                },
+                                {
+                                    title: "Episódio 2: Inferno",
+                                    synopsis: "Dividido entre continuar ou desistir, o grupo faz uma votação. Mas a realidade que enfrentam no mundo exterior pode ser tão impiedosa quanto o jogo.",
+                                    url: "https://watch.brplayer.cc/watch?v=LEF2H1OD"
+                                },
+                                {
+                                    title: "Episódio 3: O homem do guarda-chuva",
+                                    synopsis: "Um participante idoso com demência se destaca no segundo jogo.",
+                                    url: "https://watch.brplayer.cc/watch?v=93OI7BPX"
+                                },
+                                {
+                                    title: "Episódio 4: Fiquem juntos.",
+                                    synopsis: "Os jogadores formam equipes para o próximo jogo, resultando em traições e alianças",
+                                    url: "https://watch.brplayer.cc/watch?v=RSAFMZYP"
+                                },
+                                {
+                                    title: "Episódio 5: Um Mundo Justo",
+                                    synopsis: "Flashbacks revelam o passado dos participantes enquanto a equipe vencedora desfruta de privilégios",
+                                    url: "https://watch.brplayer.cc/watch?v=RH6U8Z9Q"
+                                },
+                                {
+                                    title: "Episódio 6: Gganbu",
+                                    synopsis: "Os jogadores formam duplas para o quarto jogo. Gi-hun enfrenta um dilema moral, Sang-woo escolhe se proteger e Sae-byeok conta sua história.",
+                                    url: "https://watch.brplayer.cc/watch?v=TOIXBD41"
+                                },
+                                {
+                                    title: "Episódio 7: Vips",
+                                    synopsis: "Os convidados especiais chegam para assistir aos jogos enquanto os participantes enfrentam um novo desafio.",
+                                    url: "https://watch.brplayer.cc/watch?v=F2HI60MO"
+                                },
+                                {
+                                    title: "Episódio 8: O líder",
+                                    synopsis: "Os jogadores restantes competem em uma travessia perigosa em uma ponte de vidro.",
+                                    url: "https://watch.brplayer.cc/watch?v=T6DIOP3Z"
+                                },
+                                {
+                                    title: "Episódio 9: Um Dia de Sorte",
+                                    synopsis: "Os dois finalistas se enfrentam no último jogo enquanto o organizador revela seus motivos.",
+                                    url: "https://watch.brplayer.cc/watch?v=OFJV9HEN"
+                                }
+                            ]
+                        },
+                        {
+                            number: 2,
+                            episodes: [
+                                {
+                                    title: "Episódio 1: Pão e Loteria",
+                                    synopsis: "Gi-hun sai do aeroporto em busca de vingança. Mais tarde, em seu esconderijo, ele intensifica a busca pelo recrutador.",
+                                    url: "https://watch.brplayer.cc/watch?v=HP13UAQ9"
+                                },
+                                {
+                                    title: "Episódio 2: Festa de Halloween",
+                                    synopsis: "Gi-hun finalmente consegue um convite, e a data mostra que é para o Halloween.",
+                                    url: "https://watch.brplayer.cc/watch?v=ICTZRHEJ"
+                                },
+                                {
+                                    title: "Episódio 3: 001",
+                                    synopsis: "Novos jogadores se reúnem para tentar ganhar 45,6 bilhões de wons. Depois de uma primeira rodada intensa, os destinos dos sobreviventes estão por um fio (e por um voto).",
+                                    url: "https://watch.brplayer.cc/watch?v=ICTZRHEJ"
+                                },
+                                {
+                                    title: "Episódio 4: Seis pernas",
+                                    synopsis: "Os jogadores se preparam para o próximo jogo: um pentatlo em seis pernas, em que cada membro da equipe precisa vencer um minijogo (ou enfrentar a eliminação coletiva).",
+                                    url: "https://watch.brplayer.cc/watch?v=EBC28J65"
+                                },
+                                {
+                                    title: "Episódio 5: Mais um jogo",
+                                    synopsis: "Os jogadores se preparam para o próximo jogo: um pentatlo em seis pernas, em que cada membro da equipe precisa vencer um minijogo (ou enfrentar a eliminação coletiva).",
+                                    url: "https://watch.brplayer.cc/watch?v=7H2KUETW"
+                                },
+                                {
+                                    title: "Episódio 6: O ﻿ X",
+                                    synopsis: "Jun-ho e sua equipe têm a missão de se infiltrar em uma ilha suspeita. Com o prêmio e as tensões aumentando, os jogadores se dividem em duas facções rivais.",
+                                    url: "https://watch.brplayer.cc/watch?v=VXEN0MJP"
+                                },
+                                {
+                                    title: "Episódio 7: Amigos ou inimigos?",
+                                    synopsis: "Os jogadores restantes bolam uma estratégia para sobreviver à noite. Gi-hun propõe um plano arriscado, mas vai precisar de aliados confiáveis para colocá-lo em prática.",
+                                    url: "https://watch.brplayer.cc/watch?v=EBC28J65"
+                                }
+                            ]
+                        },
+                        {
+                            number: 3,
+                            episodes: [
+                                {
+                                    title: "Episódio 1: Chaves e facas",
+                                    synopsis: "No-eul se infiltra em uma operação perigosa. Um novo jogo é anunciado: esconde-esconde, em que um grupo tem uma chave e o outro, uma faca.",
+                                    url: "https://watch.brplayer.cc/watch?v=HP13UAQ9"
+                                },
+                                {
+                                    title: "Episódio 2: Noite estrelada",
+                                    synopsis: "Recomeçam os jogos e Gi-hun faz questão de confrontar Kang Dae-ho. Enquanto isso, Kim Jun-hee enfrenta uma crise repentina que a leva ao limite.",
+                                    url: "https://embedplay.icu/player.php?id=10264a29"
+                                },
+                                {
+                                    title: "Episódio 3: Não é culpa sua",
+                                    synopsis: "A equipe de Jun-ho chega perto de encontrar a ilha. Jang Geum-ja faz um apelo desesperado a Gi-hun para ajudar Jun-hee. Os VIPs discutem uma proposta cruel.",
+                                    url: "https://embedplay.icu/player.php?id=09a152ee"
+                                },
+                                {
+                                    title: "Episódio 4: 222",
+                                    synopsis: "Mesmo com o apoio de Gi-hun, Jun-hee precisa tomar uma decisão crucial. Antes do último jogo, o líder dá um ultimato a Gi-hun.",
+                                    url: "https://embedplay.icu/player.php?id=68c69554"
+                                },
+                                {
+                                    title: "Episódio 5: ○△□",
+                                    synopsis: "No-eul até tenta negociar, mas seu plano fracassa. Gi-hun enfrenta uma encruzilhada moral que testa seus limites: até onde ele é capaz de ir?",
+                                    url: "https://embedplay.icu/player.php?id=6d45d557"
+                                },
+                                {
+                                    title: "Episódio 6: Humanos",
+                                    synopsis: "Enquanto Jun-ho corre para encontrar a ilha, a tensão aumenta na rodada decisiva. Os últimos jogadores enfrentam uma situação impossível nos minutos finais do jogo.",
+                                    url: "https://embedplay.icu/player.php?id=d6584269"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    title: "Passado",
+                    category: "Drama",
+                    thumb: "https://image.tmdb.org/t/p/w600_and_h900_bestv2/6rdAUVJDApKKihkrqIt6Vtkz938.jpg",
+                    synopsis: "Após perder tragicamente a esposa, o psiquiatra infantil Dr. Eli Adler conhece um garoto problemático que parece ter uma conexão assustadora com o passado de Eli.",
+                    seasons: [
+                        {
+                            number: 1,
+                            episodes: [
+                                {
+                                    title: "Episódio 1: O impostor",
+                                    synopsis: "O dr. Eli Adler é um psiquiatra infantil assombrado pela morte de sua esposa Lynn. Um dia, Noah, de oito anos, aparece com um conhecimento inexplicável sobre a vida de Eli.",
+                                    url: "https://watch.brplayer.cc/watch?v=URFA89SD"
+                                },
+                                {
+                                    title: "Episódio 2: O cientista",
+                                    synopsis: "Após a explosão de Noah na escola, Eli se envolve mais no tratamento, descobrindo desenhos e paralelos assustadores com seu próprio trauma",
+                                    url: "https://watch.brplayer.cc/watch?v=JPRWF2K3"
+                                },
+                                {
+                                    title: "Episódio 3: O mentiroso",
+                                    synopsis: "Após a explosão de Noah na escola, Eli se envolve mais no tratamento, descobrindo desenhos e paralelos assustadores com seu próprio trauma",
+                                    url: "https://watch.brplayer.cc/watch?v=JPRWF2K3"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ];
 
-localStorage.setItem("schaccine_series", JSON.stringify(seriesManuais));
+            localStorage.setItem("schaccine_series", JSON.stringify(seriesManuais));
         }
         adicionarConteudoManual();
     </script>
