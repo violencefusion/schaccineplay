@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1557,6 +1558,11 @@
                 <i class="fas fa-lock auth-input-icon"></i>
             </div>
 
+            <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-top:8px;">
+                <input type="checkbox" id="rememberMe" />
+                <label for="rememberMe" style="color:#ccc;font-size:14px;line-height:1;">Lembrar-me</label>
+            </div>
+
             <div class="auth-actions">
                 <button class="auth-btn primary" onclick="login()">Entrar</button>
                 <button class="auth-btn secondary" onclick="register()">Registrar</button>
@@ -1751,7 +1757,7 @@
             <div class="content-detail-body">
                 <div>
                     <div class="content-detail-player">
-                        <iframe id="contentDetailPlayer" allowfullscreen></iframe>
+                        <iframe id="contentDetailPlayer" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>
                     </div>
 
                     <!-- Seasons container for series -->
@@ -4128,5 +4134,72 @@
         }
         adicionarConteudoManual();
     </script>
+
+    <script>
+    (function(){
+        // Prefill saved credentials (remember-me)
+        try {
+            document.addEventListener('DOMContentLoaded', () => {
+                const saved = localStorage.getItem('schaccine_savedCreds');
+                if (saved) {
+                    try {
+                        const s = JSON.parse(saved);
+                        if (s.user) document.getElementById('authUser').value = s.user;
+                        if (s.pass) document.getElementById('authPass').value = s.pass;
+                        const rm = document.getElementById('rememberMe');
+                        if (rm) rm.checked = true;
+                    } catch(e){}
+                }
+
+                // Keyboard helpers
+                document.addEventListener('keydown', (e) => {
+                    const active = document.activeElement && document.activeElement.tagName;
+                    // Press '/' to focus search bar when not typing
+                    if (e.key === '/' && active !== 'INPUT' && active !== 'TEXTAREA') {
+                        const search = document.getElementById('searchBar') || document.getElementById('seriesSearchBar');
+                        if (search) {
+                            e.preventDefault();
+                            search.focus();
+                            return;
+                        }
+                    }
+
+                    // Enter to submit login when inside auth container
+                    if (e.key === 'Enter') {
+                        const authSection = document.getElementById('authSection');
+                        if (authSection && !authSection.classList.contains('hidden')) {
+                            const focused = document.activeElement;
+                            if (focused && (focused.id === 'authUser' || focused.id === 'authPass' || focused.closest('.auth-container'))) {
+                                e.preventDefault();
+                                if (typeof window.login === 'function') {
+                                    window.login();
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Wrap existing login to add remember-me behavior (stores credentials in localStorage)
+                if (typeof window.login === 'function') {
+                    const originalLogin = window.login;
+                    window.login = function(){
+                        const userInput = document.getElementById('authUser')?.value?.trim() || '';
+                        const passInput = document.getElementById('authPass')?.value?.trim() || '';
+                        const remember = document.getElementById('rememberMe')?.checked;
+
+                        if (remember && userInput && passInput) {
+                            try { localStorage.setItem('schaccine_savedCreds', JSON.stringify({ user: userInput, pass: passInput })); } catch(e){}
+                        } else {
+                            try { localStorage.removeItem('schaccine_savedCreds'); } catch(e){}
+                        }
+
+                        return originalLogin();
+                    };
+                }
+            });
+        } catch(e){}
+    })();
+    </script>
+
 </body>
 </html>
